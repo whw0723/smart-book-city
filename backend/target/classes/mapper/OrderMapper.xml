@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookstore.mapper.OrderMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="OrderResultMap" type="com.bookstore.entity.Order">
+        <id property="id" column="id"/>
+        <result property="orderNumber" column="order_number"/>
+        <result property="orderDate" column="order_date"/>
+        <result property="totalAmount" column="total_amount"/>
+        <result property="status" column="status"/>
+        <!-- 用户关联 -->
+        <association property="user" javaType="com.bookstore.entity.User">
+            <id property="id" column="user_id"/>
+            <result property="username" column="username"/>
+        </association>
+    </resultMap>
+
+    <!-- 包含订单项的结果映射 -->
+    <resultMap id="OrderWithItemsResultMap" type="com.bookstore.entity.Order" extends="OrderResultMap">
+        <!-- 订单项集合 -->
+        <collection property="orderItems" ofType="com.bookstore.entity.OrderItem"
+                    select="com.bookstore.mapper.OrderItemMapper.findByOrderId"
+                    column="id"/>
+    </resultMap>
+
+    <!-- 查询所有订单 -->
+    <select id="findAll" resultMap="OrderWithItemsResultMap">
+        SELECT o.*, u.username
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+    </select>
+
+    <!-- 分页查询所有订单 -->
+    <select id="findAllPaged" resultMap="OrderWithItemsResultMap">
+        SELECT o.*, u.username
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        ORDER BY o.order_date DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 获取订单总数 -->
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM orders
+    </select>
+
+    <!-- 根据ID查询订单 -->
+    <select id="findById" resultMap="OrderWithItemsResultMap" parameterType="long">
+        SELECT o.*, u.username
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        WHERE o.id = #{id}
+    </select>
+
+    <!-- 根据用户ID查询订单 -->
+    <select id="findByUserId" resultMap="OrderWithItemsResultMap" parameterType="long">
+        SELECT o.*, u.username
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        WHERE o.user_id = #{userId}
+    </select>
+
+    <!-- 根据用户ID查询订单并按下单时间降序排序 -->
+    <select id="findByUserIdOrderByOrderDateDesc" resultMap="OrderWithItemsResultMap" parameterType="long">
+        SELECT o.*, u.username
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        WHERE o.user_id = #{userId}
+        ORDER BY o.order_date DESC
+    </select>
+
+    <!-- 根据用户ID分页查询订单 -->
+    <select id="findByUserIdPaged" resultMap="OrderWithItemsResultMap">
+        SELECT o.*, u.username
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        WHERE o.user_id = #{userId}
+        ORDER BY o.order_date DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 获取用户订单总数 -->
+    <select id="countByUserId" resultType="int" parameterType="long">
+        SELECT COUNT(*) FROM orders WHERE user_id = #{userId}
+    </select>
+
+    <!-- 保存订单 -->
+    <insert id="save" parameterType="com.bookstore.entity.Order" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO orders (order_number, user_id, order_date, total_amount, status)
+        VALUES (#{orderNumber}, #{user.id}, #{orderDate}, #{totalAmount}, #{status})
+    </insert>
+
+    <!-- 更新订单 -->
+    <update id="update" parameterType="com.bookstore.entity.Order">
+        UPDATE orders
+        SET order_number = #{orderNumber},
+            user_id = #{user.id},
+            order_date = #{orderDate},
+            total_amount = #{totalAmount},
+            status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除订单 -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM orders WHERE id = #{id}
+    </delete>
+</mapper>

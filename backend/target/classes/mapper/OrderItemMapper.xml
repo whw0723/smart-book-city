@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookstore.mapper.OrderItemMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="OrderItemResultMap" type="com.bookstore.entity.OrderItem">
+        <id property="id" column="id"/>
+        <result property="quantity" column="quantity"/>
+        <result property="price" column="price"/>
+        <!-- 图书关联 -->
+        <association property="book" javaType="com.bookstore.entity.Book">
+            <id property="id" column="book_id"/>
+            <result property="title" column="title"/>
+            <result property="author" column="author"/>
+            <result property="price" column="book_price"/>
+            <result property="stock" column="stock"/>
+            <result property="category" column="category"/>
+            <result property="description" column="description"/>
+        </association>
+    </resultMap>
+
+    <!-- 查询所有订单项 -->
+    <select id="findAll" resultMap="OrderItemResultMap">
+        SELECT oi.*, b.title, b.author, b.price as book_price, b.stock, b.category, b.description
+        FROM order_items oi
+        JOIN books b ON oi.book_id = b.id
+    </select>
+
+    <!-- 根据ID查询订单项 -->
+    <select id="findById" resultMap="OrderItemResultMap" parameterType="long">
+        SELECT oi.*, b.title, b.author, b.price as book_price, b.stock, b.category, b.description
+        FROM order_items oi
+        JOIN books b ON oi.book_id = b.id
+        WHERE oi.id = #{id}
+    </select>
+
+    <!-- 根据订单ID查询订单项 -->
+    <select id="findByOrderId" resultMap="OrderItemResultMap" parameterType="long">
+        SELECT oi.*, b.title, b.author, b.price as book_price, b.stock, b.category, b.description
+        FROM order_items oi
+        JOIN books b ON oi.book_id = b.id
+        WHERE oi.order_id = #{orderId}
+    </select>
+
+    <!-- 根据图书ID查询订单项 -->
+    <select id="findByBookId" resultMap="OrderItemResultMap" parameterType="long">
+        SELECT oi.*, b.title, b.author, b.price as book_price, b.stock, b.category, b.description
+        FROM order_items oi
+        JOIN books b ON oi.book_id = b.id
+        WHERE oi.book_id = #{bookId}
+    </select>
+
+    <!-- 检查图书是否被订单项引用 -->
+    <select id="countByBookId" resultType="int" parameterType="long">
+        SELECT COUNT(*) FROM order_items WHERE book_id = #{bookId}
+    </select>
+
+    <!-- 保存订单项 -->
+    <insert id="save" parameterType="com.bookstore.entity.OrderItem" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO order_items (order_id, book_id, quantity, price)
+        VALUES (#{order.id}, #{book.id}, #{quantity}, #{price})
+    </insert>
+
+    <!-- 批量保存订单项 -->
+    <insert id="batchSave" parameterType="java.util.List">
+        INSERT INTO order_items (order_id, book_id, quantity, price)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.order.id}, #{item.book.id}, #{item.quantity}, #{item.price})
+        </foreach>
+    </insert>
+
+    <!-- 更新订单项 -->
+    <update id="update" parameterType="com.bookstore.entity.OrderItem">
+        UPDATE order_items
+        SET order_id = #{order.id},
+            book_id = #{book.id},
+            quantity = #{quantity},
+            price = #{price}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除订单项 -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM order_items WHERE id = #{id}
+    </delete>
+
+    <!-- 根据订单ID删除订单项 -->
+    <delete id="deleteByOrderId" parameterType="long">
+        DELETE FROM order_items WHERE order_id = #{orderId}
+    </delete>
+</mapper>

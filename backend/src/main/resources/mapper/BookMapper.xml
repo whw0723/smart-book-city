@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookstore.mapper.BookMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="BookResultMap" type="com.bookstore.entity.Book">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="author" column="author"/>
+        <result property="price" column="price"/>
+        <result property="stock" column="stock"/>
+        <result property="category" column="category"/>
+        <result property="description" column="description"/>
+    </resultMap>
+
+    <!-- 查询所有图书 -->
+    <select id="findAll" resultMap="BookResultMap">
+        SELECT * FROM books
+    </select>
+
+    <!-- 分页查询所有图书 -->
+    <select id="findAllPaged" resultMap="BookResultMap">
+        SELECT * FROM books
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 获取图书总数 -->
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM books
+    </select>
+
+    <!-- 根据ID查询图书 -->
+    <select id="findById" resultMap="BookResultMap" parameterType="long">
+        SELECT * FROM books WHERE id = #{id}
+    </select>
+
+    <!-- 根据标题模糊查询 -->
+    <select id="findByTitleContaining" resultMap="BookResultMap">
+        SELECT * FROM books WHERE title LIKE CONCAT('%', #{title}, '%')
+    </select>
+
+    <!-- 根据作者模糊查询 -->
+    <select id="findByAuthorContaining" resultMap="BookResultMap">
+        SELECT * FROM books WHERE author LIKE CONCAT('%', #{author}, '%')
+    </select>
+
+    <!-- 获取所有图书分类 -->
+    <select id="findAllCategories" resultType="string">
+        SELECT DISTINCT category FROM books WHERE category IS NOT NULL AND category != ''
+    </select>
+
+    <!-- 根据分类查询 -->
+    <select id="findByCategory" resultMap="BookResultMap">
+        SELECT * FROM books WHERE category = #{category}
+    </select>
+
+    <!-- 分页查询分类图书 -->
+    <select id="findByCategoryPaged" resultMap="BookResultMap">
+        SELECT * FROM books
+        WHERE category = #{category}
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 获取指定分类的图书总数 -->
+    <select id="countByCategory" resultType="int">
+        SELECT COUNT(*) FROM books WHERE category = #{category}
+    </select>
+
+    <!-- 保存图书 -->
+    <insert id="save" parameterType="com.bookstore.entity.Book" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO books (title, author, price, stock, category, description)
+        VALUES (#{title}, #{author}, #{price}, #{stock}, #{category}, #{description})
+    </insert>
+
+    <!-- 更新图书 -->
+    <update id="update" parameterType="com.bookstore.entity.Book">
+        UPDATE books
+        SET title = #{title},
+            author = #{author},
+            price = #{price},
+            stock = #{stock},
+            category = #{category},
+            description = #{description}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除图书 -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM books WHERE id = #{id}
+    </delete>
+
+    <!-- 批量删除图书 -->
+    <delete id="batchDeleteByIds">
+        DELETE FROM books WHERE id IN
+        <foreach collection="bookIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 获取所有不重复的分类 -->
+    <select id="findDistinctCategories" resultType="string">
+        SELECT DISTINCT category FROM books WHERE category IS NOT NULL AND category != ''
+    </select>
+
+    <!-- 重新排序图书ID -->
+    <update id="reorderBookIds">
+        SET @count = 0;
+
+        -- 创建临时表
+        CREATE TEMPORARY TABLE IF NOT EXISTS books_temp LIKE books;
+
+        -- 清空临时表
+        TRUNCATE TABLE books_temp;
+
+        -- 将数据按顺序复制到临时表（不带ID）
+        INSERT INTO books_temp (title, author, price, stock, category, description)
+        SELECT title, author, price, stock, category, description
+        FROM books
+        ORDER BY id;
+
+        -- 确保没有外键引用books表的ID（如果有，需要先处理这些引用）
+        -- 检查order_items表中是否有引用
+        SET @order_items_count = (SELECT COUNT(*) FROM order_items);
+
+        -- 如果有订单项引用图书，则需要先备份订单项
+        CREATE TEMPORARY TABLE IF NOT EXISTS order_items_backup LIKE order_items;
+        TRUNCATE TABLE order_items_backup;
+        INSERT INTO order_items_backup SELECT * FROM order_items;
+
+        -- 删除订单项中的引用
+        DELETE FROM order_items;
+
+        -- 清空原表
+        TRUNCATE TABLE books;
+
+        -- 将临时表数据复制回原表
+        INSERT INTO books (title, author, price, stock, category, description)
+        SELECT title, author, price, stock, category, description
+        FROM books_temp;
+
+        -- 创建ID映射表（旧ID到新ID的映射）
+        CREATE TEMPORARY TABLE IF NOT EXISTS id_mapping (
+            old_id BIGINT,
+            new_id BIGINT
+        );
+
+        -- 填充映射表
+        INSERT INTO id_mapping (old_id, new_id)
+        SELECT b_old.id, b_new.id
+        FROM books_temp b_old
+        JOIN books b_new ON b_old.title = b_new.title AND b_old.author = b_new.author
+        ORDER BY b_old.id;
+
+        -- 如果有订单项，根据映射更新订单项中的book_id引用
+        INSERT INTO order_items (order_id, book_id, quantity, price)
+        SELECT ob.order_id, im.new_id, ob.quantity, ob.price
+        FROM order_items_backup ob
+        JOIN id_mapping im ON ob.book_id = im.old_id;
+
+        -- 返回影响的行数
+        SELECT ROW_COUNT();
+    </update>
+</mapper>

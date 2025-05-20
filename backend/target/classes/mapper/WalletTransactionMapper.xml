@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookstore.mapper.WalletTransactionMapper">
+    
+    <!-- 结果映射 -->
+    <resultMap id="WalletTransactionResultMap" type="com.bookstore.entity.WalletTransaction">
+        <id property="id" column="id"/>
+        <result property="amount" column="amount"/>
+        <result property="type" column="type"/>
+        <result property="description" column="description"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <!-- 钱包关联 -->
+        <association property="wallet" javaType="com.bookstore.entity.Wallet">
+            <id property="id" column="wallet_id"/>
+            <result property="balance" column="balance"/>
+            <!-- 用户关联 -->
+            <association property="user" javaType="com.bookstore.entity.User">
+                <id property="id" column="user_id"/>
+                <result property="username" column="username"/>
+            </association>
+        </association>
+        <!-- 订单关联 -->
+        <association property="relatedOrder" javaType="com.bookstore.entity.Order">
+            <id property="id" column="related_order_id"/>
+            <result property="orderNumber" column="order_number"/>
+            <result property="totalAmount" column="total_amount"/>
+        </association>
+    </resultMap>
+    
+    <!-- 根据ID查询交易记录 -->
+    <select id="findById" resultMap="WalletTransactionResultMap" parameterType="long">
+        SELECT wt.*, w.balance, w.user_id, u.username, o.order_number, o.total_amount
+        FROM wallet_transaction wt
+        LEFT JOIN wallet w ON wt.wallet_id = w.id
+        LEFT JOIN users u ON w.user_id = u.id
+        LEFT JOIN orders o ON wt.related_order_id = o.id
+        WHERE wt.id = #{id}
+    </select>
+    
+    <!-- 根据钱包ID查询交易记录 -->
+    <select id="findByWalletId" resultMap="WalletTransactionResultMap" parameterType="long">
+        SELECT wt.*, w.balance, w.user_id, u.username, o.order_number, o.total_amount
+        FROM wallet_transaction wt
+        LEFT JOIN wallet w ON wt.wallet_id = w.id
+        LEFT JOIN users u ON w.user_id = u.id
+        LEFT JOIN orders o ON wt.related_order_id = o.id
+        WHERE wt.wallet_id = #{walletId}
+        ORDER BY wt.create_time DESC
+    </select>
+    
+    <!-- 根据用户ID查询交易记录 -->
+    <select id="findByUserId" resultMap="WalletTransactionResultMap" parameterType="long">
+        SELECT wt.*, w.balance, w.user_id, u.username, o.order_number, o.total_amount
+        FROM wallet_transaction wt
+        LEFT JOIN wallet w ON wt.wallet_id = w.id
+        LEFT JOIN users u ON w.user_id = u.id
+        LEFT JOIN orders o ON wt.related_order_id = o.id
+        WHERE w.user_id = #{userId}
+        ORDER BY wt.create_time DESC
+    </select>
+    
+    <!-- 根据订单ID查询交易记录 -->
+    <select id="findByOrderId" resultMap="WalletTransactionResultMap" parameterType="long">
+        SELECT wt.*, w.balance, w.user_id, u.username, o.order_number, o.total_amount
+        FROM wallet_transaction wt
+        LEFT JOIN wallet w ON wt.wallet_id = w.id
+        LEFT JOIN users u ON w.user_id = u.id
+        LEFT JOIN orders o ON wt.related_order_id = o.id
+        WHERE wt.related_order_id = #{orderId}
+        ORDER BY wt.create_time DESC
+    </select>
+    
+    <!-- 保存交易记录 -->
+    <insert id="save" parameterType="com.bookstore.entity.WalletTransaction" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO wallet_transaction (wallet_id, amount, type, description, related_order_id, status, create_time)
+        VALUES (#{wallet.id}, #{amount}, #{type}, #{description}, 
+                #{relatedOrder.id}, #{status}, #{createTime})
+    </insert>
+    
+    <!-- 更新交易记录 -->
+    <update id="update" parameterType="com.bookstore.entity.WalletTransaction">
+        UPDATE wallet_transaction
+        SET status = #{status}
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 删除交易记录 -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM wallet_transaction WHERE id = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bookstore.mapper.AdminMapper">
+    
+    <!-- 结果映射 -->
+    <resultMap id="AdminResultMap" type="com.bookstore.entity.Admin">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="email" column="email"/>
+        <result property="phone" column="phone"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    
+    <!-- 查询所有管理员 -->
+    <select id="findAll" resultMap="AdminResultMap">
+        SELECT * FROM admin
+    </select>
+    
+    <!-- 根据ID查询管理员 -->
+    <select id="findById" resultMap="AdminResultMap" parameterType="long">
+        SELECT * FROM admin WHERE id = #{id}
+    </select>
+    
+    <!-- 根据用户名查询管理员 -->
+    <select id="findByUsername" resultMap="AdminResultMap" parameterType="string">
+        SELECT * FROM admin WHERE username = #{username}
+    </select>
+    
+    <!-- 检查用户名是否存在 -->
+    <select id="existsByUsername" resultType="int" parameterType="string">
+        SELECT COUNT(*) FROM admin WHERE username = #{username}
+    </select>
+    
+    <!-- 保存管理员 -->
+    <insert id="save" parameterType="com.bookstore.entity.Admin" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO admin (username, password, email, phone, create_time, update_time)
+        VALUES (#{username}, #{password}, #{email}, #{phone}, #{createTime}, #{updateTime})
+    </insert>
+    
+    <!-- 更新管理员 -->
+    <update id="update" parameterType="com.bookstore.entity.Admin">
+        UPDATE admin
+        SET username = #{username},
+            password = #{password},
+            email = #{email},
+            phone = #{phone},
+            update_time = #{updateTime}
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 删除管理员 -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM admin WHERE id = #{id}
+    </delete>
+</mapper>
