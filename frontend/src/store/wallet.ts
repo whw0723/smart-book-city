@@ -24,6 +24,7 @@ export const useWalletStore = defineStore('wallet', {
       try {
         const response = await axios.get(`http://localhost:8080/api/wallet/${userStore.user?.id}`)
         this.balance = response.data.balance
+        userStore.updateUserBalance(response.data.balance)
       } catch (error: any) {
         console.error('获取余额失败:', error)
         this.error = error.response?.data || '获取余额失败'
@@ -45,8 +46,9 @@ export const useWalletStore = defineStore('wallet', {
           amount
         })
 
-        // 更新余额
+        // 确保余额更新为最新值
         this.balance = response.data.balance
+        userStore.updateUserBalance(response.data.balance)
 
         return response.data
       } catch (error: any) {
@@ -71,8 +73,9 @@ export const useWalletStore = defineStore('wallet', {
           amount
         })
 
-        // 更新余额
+        // 确保余额更新为最新值
         this.balance = response.data.balance
+        userStore.updateUserBalance(response.data.balance)
 
         return response.data
       } catch (error: any) {
@@ -99,6 +102,8 @@ export const useWalletStore = defineStore('wallet', {
 
         // 更新余额
         this.balance = response.data.balance
+        // 同步更新用户Store中的余额
+        userStore.updateUserBalance(response.data.balance)
 
         return response.data
       } catch (error: any) {
@@ -111,6 +116,7 @@ export const useWalletStore = defineStore('wallet', {
     },
 
     async refundOrder(orderId: number) {
+      const userStore = useUserStore()
       this.loading = true
       this.error = null
 
@@ -121,6 +127,8 @@ export const useWalletStore = defineStore('wallet', {
 
         // 更新余额
         this.balance = response.data.balance
+        // 同步更新用户Store中的余额
+        userStore.updateUserBalance(response.data.balance)
 
         return response.data
       } catch (error: any) {
@@ -147,6 +155,8 @@ export const useWalletStore = defineStore('wallet', {
 
         // 更新余额
         this.balance = response.data.balance
+        // 同步更新用户Store中的余额
+        userStore.updateUserBalance(response.data.balance)
 
         return response.data
       } catch (error: any) {

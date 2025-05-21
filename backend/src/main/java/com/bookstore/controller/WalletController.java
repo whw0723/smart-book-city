@@ -38,6 +38,7 @@ public class WalletController {
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUserBalance(@PathVariable Long userId) {
         try {
+            // 获取最新的用户信息
             User user = userService.getUserById(userId);
             if (user == null) {
                 return ResponseEntity.notFound().build();
@@ -88,11 +89,12 @@ public class WalletController {
             // 充值并创建交易记录
             WalletTransaction transaction = walletService.deposit(userId, amount, "账户充值");
 
-            // 获取更新后的用户信息
+            // 确保获取最新的用户信息
             User user = userService.getUserById(userId);
 
             System.out.println("充值成功 - 用户ID: " + userId + ", 金额: " + amount +
                               ", 交易记录ID: " + transaction.getId());
+            System.out.println("当前用户余额: " + user.getBalance());
 
             Map<String, Object> response = new HashMap<>();
             response.put("userId", user.getId());
@@ -121,11 +123,12 @@ public class WalletController {
             // 提现并创建交易记录
             WalletTransaction transaction = walletService.withdraw(userId, amount, "账户提现");
 
-            // 获取更新后的用户信息
+            // 确保获取最新的用户信息
             User user = userService.getUserById(userId);
 
             System.out.println("提现成功 - 用户ID: " + userId + ", 金额: " + amount +
                               ", 交易记录ID: " + transaction.getId());
+            System.out.println("当前用户余额: " + user.getBalance());
 
             Map<String, Object> response = new HashMap<>();
             response.put("userId", user.getId());

@@ -76,6 +76,9 @@ public class WalletService {
 
         // 更新钱包余额
         walletMapper.updateBalance(wallet.getId(), amount);
+        
+        // 同时更新用户余额
+        userMapper.updateBalance(userId, amount);
 
         // 创建交易记录
         WalletTransaction transaction = new WalletTransaction();
@@ -109,6 +112,9 @@ public class WalletService {
 
         // 更新钱包余额（减去提现金额）
         walletMapper.updateBalance(wallet.getId(), amount.negate());
+        
+        // 同时更新用户余额
+        userMapper.updateBalance(userId, amount.negate());
 
         // 创建交易记录
         WalletTransaction transaction = new WalletTransaction();
@@ -148,6 +154,9 @@ public class WalletService {
 
         // 更新钱包余额（减去订单金额）
         walletMapper.updateBalance(wallet.getId(), order.getTotalAmount().negate());
+        
+        // 同时更新用户余额
+        userMapper.updateBalance(userId, order.getTotalAmount().negate());
 
         // 创建交易记录
         WalletTransaction transaction = new WalletTransaction();
@@ -189,6 +198,9 @@ public class WalletService {
 
         // 更新钱包余额（加上订单金额）
         walletMapper.updateBalance(wallet.getId(), order.getTotalAmount());
+        
+        // 同时更新用户余额
+        userMapper.updateBalance(order.getUser().getId(), order.getTotalAmount());
 
         // 创建交易记录
         WalletTransaction transaction = new WalletTransaction();

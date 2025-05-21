@@ -96,6 +96,14 @@ export const useUserStore = defineStore('user', {
         // 如果用户类型是管理员，直接设置为管理员
         this.isAdmin = userType === 'admin'
       }
+    },
+    
+    // 更新用户余额并保存到本地存储
+    updateUserBalance(balance: number) {
+      if (this.user) {
+        this.user.balance = balance
+        localStorage.setItem('user', JSON.stringify(this.user))
+      }
     }
   }
 })

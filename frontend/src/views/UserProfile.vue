@@ -374,6 +374,8 @@ const handleDeposit = async () => {
   depositLoading.value = true
   try {
     await walletStore.deposit(depositForm.value.amount)
+    // 充值成功后，立即刷新钱包余额
+    await walletStore.fetchWallet()
     ElMessage.success('充值成功')
     depositDialogVisible.value = false
   } catch (error: any) {
@@ -405,6 +407,8 @@ const handleWithdraw = async () => {
   withdrawLoading.value = true
   try {
     await walletStore.withdraw(withdrawForm.value.amount)
+    // 提现成功后，立即刷新钱包余额
+    await walletStore.fetchWallet()
     ElMessage.success('提现成功')
     withdrawDialogVisible.value = false
   } catch (error: any) {
