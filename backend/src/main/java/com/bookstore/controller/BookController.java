@@ -199,7 +199,7 @@ public class BookController {
      * 批量删除图书
      */
     @PostMapping("/batch-delete")
-    @Transactional
+    
     public ApiResponse<Map<String, Object>> batchDeleteBooks(@RequestBody Map<String, List<Integer>> payload) {
         List<Integer> bookIdInts = payload.get("bookIds");
         if (bookIdInts == null || bookIdInts.isEmpty()) {
