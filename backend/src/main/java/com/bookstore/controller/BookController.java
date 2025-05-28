@@ -200,11 +200,16 @@ public class BookController {
      */
     @PostMapping("/batch-delete")
     @Transactional
-    public ApiResponse<Map<String, Object>> batchDeleteBooks(@RequestBody Map<String, List<Long>> payload) {
-        List<Long> bookIds = payload.get("bookIds");
-        if (bookIds == null || bookIds.isEmpty()) {
+    public ApiResponse<Map<String, Object>> batchDeleteBooks(@RequestBody Map<String, List<Integer>> payload) {
+        List<Integer> bookIdInts = payload.get("bookIds");
+        if (bookIdInts == null || bookIdInts.isEmpty()) {
             return ApiResponse.error(HttpStatus.BAD_REQUEST.value(), "未提供要删除的图书ID");
         }
+        
+        // 将 Integer 类型的 ID 转换为 Long 类型
+        List<Long> bookIds = bookIdInts.stream()
+                .map(Integer::longValue)
+                .collect(Collectors.toList());
         
         logger.info("批量删除图书, bookIds={}", bookIds);
         

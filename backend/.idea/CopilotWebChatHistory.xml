@@ -1,0 +1,889 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotWebChatHistory">
+    <option name="currentConversation">
+      <WebConversation>
+        <option name="session">
+          <ChatSession>
+            <option name="messages">
+              <list>
+                <UIChatMessage>
+                  <option name="command" value="" />
+                  <option name="content" value="你好" />
+                  <option name="cost" value="0" />
+                  <option name="createdAt" value="1748226079019" />
+                  <option name="localReferences">
+                    <list>
+                      <LocalReferences>
+                        <option name="isRequestStage" value="true" />
+                        <option name="range">
+                          <RefRange />
+                        </option>
+                        <option name="uri" value="{&quot;path&quot;:&quot;file:///D:/project/毕设/智慧书城/backend/src/main/resources/application.properties&quot;}" />
+                      </LocalReferences>
+                    </list>
+                  </option>
+                  <option name="parser">
+                    <SimpleMarkdownStreamParser>
+                      <option name="content" value="你好" />
+                      <option name="nodes">
+                        <list>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="你好" />
+                            <option name="contentId" value="652829" />
+                            <option name="settled" value="false" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                        </list>
+                      </option>
+                      <option name="parserState">
+                        <ParserState>
+                          <option name="column" value="1" />
+                          <option name="offset" value="2" />
+                          <option name="moveCursor" value="true" />
+                        </ParserState>
+                      </option>
+                    </SimpleMarkdownStreamParser>
+                  </option>
+                  <option name="role" value="user" />
+                  <option name="selectedRanges">
+                    <list />
+                  </option>
+                  <option name="uri" value="" />
+                  <option name="variables">
+                    <list />
+                  </option>
+                </UIChatMessage>
+                <UIChatMessage>
+                  <option name="actions">
+                    <list />
+                  </option>
+                  <option name="codebaseReferences">
+                    <list />
+                  </option>
+                  <option name="codebaseStatus" value="init" />
+                  <option name="command" value="" />
+                  <option name="content" value="你好！看起来你提供了一个 Spring Boot 项目的 `application.properties` 文件。这个文件用于配置 Spring Boot 应用程序的各种属性。以下是一些关键配置项的解释：&#10;&#10;### 关键配置项解释&#10;&#10;- **server.port**: 设置服务器端口号为 8080。&#10;- **spring.datasource.url**: 数据库连接 URL，指向本地 MySQL 数据库 `bookstore`，并设置相关参数。&#10;- **spring.datasource.username** 和 **spring.datasource.password**: 数据库用户名和密码，均为 `root`。&#10;- **spring.datasource.driver-class-name**: 使用的 MySQL 驱动类为 `com.mysql.cj.jdbc.Driver`。&#10;- **spring.sql.init.mode**: 数据库初始化模式，设为 `always`，表示每次启动时都会执行数据库初始化脚本。&#10;- **spring.sql.init.schema-locations**: 初始化脚本的位置，指向 `classpath:bookstore_init.sql`。&#10;- **spring.sql.init.continue-on-error**: 初始化脚本执行时的错误处理方式，设为 `true` 表示即使出错也继续执行。&#10;- **mybatis.mapper-locations**: MyBatis 映射文件的位置，使用通配符 `classpath*:mapper/*.xml` 加载所有 `mapper` 目录下的 XML 文件。&#10;- **mybatis.type-aliases-package**: MyBatis 类型别名的包路径，设为 `com.bookstore.entity`。&#10;- **mybatis.configuration.map-underscore-to-camelCase**: 设置为 `true`，表示将下划线命名转换为驼峰命名。&#10;- **mybatis.configuration.cache-enabled**: 启用缓存，设为 `true`。&#10;- **mybatis.configuration.log-impl**: 设置 MyBatis 的日志实现为 `org.apache.ibatis.logging.stdout.StdOutImpl`，输出到控制台。&#10;&#10;希望这些信息对你有帮助！如果你有其他问题，请随时提问。" />
+                  <option name="cost" value="18510" />
+                  <option name="createdAt" value="1748226097546" />
+                  <option name="followup">
+                    <list />
+                  </option>
+                  <option name="id" value="01970a64f92b7117b16710486b03328b" />
+                  <option name="knowledgeReferences">
+                    <list />
+                  </option>
+                  <option name="localReferences">
+                    <list>
+                      <LocalReferences>
+                        <option name="isRequestStage" value="true" />
+                        <option name="range">
+                          <RefRange />
+                        </option>
+                        <option name="uri" value="{&quot;path&quot;:&quot;file:///D:/project/毕设/智慧书城/backend/src/main/resources/application.properties&quot;}" />
+                      </LocalReferences>
+                    </list>
+                  </option>
+                  <option name="parser">
+                    <SimpleMarkdownStreamParser>
+                      <option name="columns">
+                        <list>
+                          <option value="101" />
+                          <option value="-1" />
+                          <option value="10" />
+                          <option value="-1" />
+                          <option value="33" />
+                          <option value="73" />
+                          <option value="86" />
+                          <option value="84" />
+                          <option value="68" />
+                          <option value="82" />
+                          <option value="78" />
+                          <option value="105" />
+                          <option value="78" />
+                          <option value="83" />
+                          <option value="57" />
+                          <option value="108" />
+                          <option value="-1" />
+                          <option value="26" />
+                        </list>
+                      </option>
+                      <option name="content" value="你好！看起来你提供了一个 Spring Boot 项目的 `application.properties` 文件。这个文件用于配置 Spring Boot 应用程序的各种属性。以下是一些关键配置项的解释：&#10;&#10;### 关键配置项解释&#10;&#10;- **server.port**: 设置服务器端口号为 8080。&#10;- **spring.datasource.url**: 数据库连接 URL，指向本地 MySQL 数据库 `bookstore`，并设置相关参数。&#10;- **spring.datasource.username** 和 **spring.datasource.password**: 数据库用户名和密码，均为 `root`。&#10;- **spring.datasource.driver-class-name**: 使用的 MySQL 驱动类为 `com.mysql.cj.jdbc.Driver`。&#10;- **spring.sql.init.mode**: 数据库初始化模式，设为 `always`，表示每次启动时都会执行数据库初始化脚本。&#10;- **spring.sql.init.schema-locations**: 初始化脚本的位置，指向 `classpath:bookstore_init.sql`。&#10;- **spring.sql.init.continue-on-error**: 初始化脚本执行时的错误处理方式，设为 `true` 表示即使出错也继续执行。&#10;- **mybatis.mapper-locations**: MyBatis 映射文件的位置，使用通配符 `classpath*:mapper/*.xml` 加载所有 `mapper` 目录下的 XML 文件。&#10;- **mybatis.type-aliases-package**: MyBatis 类型别名的包路径，设为 `com.bookstore.entity`。&#10;- **mybatis.configuration.map-underscore-to-camelCase**: 设置为 `true`，表示将下划线命名转换为驼峰命名。&#10;- **mybatis.configuration.cache-enabled**: 启用缓存，设为 `true`。&#10;- **mybatis.configuration.log-impl**: 设置 MyBatis 的日志实现为 `org.apache.ibatis.logging.stdout.StdOutImpl`，输出到控制台。&#10;&#10;希望这些信息对你有帮助！如果你有其他问题，请随时提问。&#10;" />
+                      <option name="nodes">
+                        <list>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="你好！看起来你提供了一个 Spring Boot 项目的 `application.properties` 文件。这个文件用于配置 Spring Boot 应用程序的各种属性。以下是一些关键配置项的解释：" />
+                            <option name="contentId" value="-363448532" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="" />
+                            <option name="contentId" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value=" 关键配置项解释" />
+                            <option name="contentId" value="1689070020" />
+                            <option name="level" value="3" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="heading" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="" />
+                            <option name="contentId" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value=" **server.port**: 设置服务器端口号为 8080。" />
+                            <option name="contentId" value="-1852096165" />
+                            <option name="indentSize" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="startSymbol" value="-" />
+                            <option name="type" value="list-item" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value=" **spring.datasource.url**: 数据库连接 URL，指向本地 MySQL 数据库 `bookstore`，并设置相关参数。" />
+                            <option name="contentId" value="-566983900" />
+                            <option name="indentSize" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="startSymbol" value="-" />
+                            <option name="type" value="list-item" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value=" **spring.datasource.username** 和 **spring.datasource.password**: 数据库用户名和密码，均为 `root`。" />
+                            <option name="contentId" value="907005860" />
+                            <option name="indentSize" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="startSymbol" value="-" />
+                            <option name="type" value="list-item" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value=" **spring.datasource.driver-class-name**: 使用的 MySQL 驱动类为 `com.mysql.cj.jdbc.Driver`。" />
+                            <option name="contentId" value="426646475" />
+                            <option name="indentSize" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="startSymbol" value="-" />
+                            <option name="type" value="list-item" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value=" **spring.sql.init.mode**: 数据库初始化模式，设为 `always`，表示每次启动时都会执行数据库初始化脚本。" />
+                            <option name="contentId" value="-571796194" />
+                            <option name="indentSize" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="startSymbol" value="-" />
+                            <option name="type" value="list-item" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value=" **spring.sql.init.schema-locations**: 初始化脚本的位置，指向 `classpath:bookstore_init.sql`。" />
+                            <option name="contentId" value="-1846756724" />
+                            <option name="indentSize" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="startSymbol" value="-" />
+                            <option name="type" value="list-item" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value=" **spring.sql.init.continue-on-error**: 初始化脚本执行时的错误处理方式，设为 `true` 表示即使出错也继续执行。" />
+                            <option name="contentId" value="-1574622791" />
+                            <option name="indentSize" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="startSymbol" value="-" />
+                            <option name="type" value="list-item" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value=" **mybatis.mapper-locations**: MyBatis 映射文件的位置，使用通配符 `classpath*:mapper/*.xml` 加载所有 `mapper` 目录下的 XML 文件。" />
+                            <option name="contentId" value="-1040665645" />
+                            <option name="indentSize" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="startSymbol" value="-" />
+                            <option name="type" value="list-item" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value=" **mybatis.type-aliases-package**: MyBatis 类型别名的包路径，设为 `com.bookstore.entity`。" />
+                            <option name="contentId" value="637559286" />
+                            <option name="indentSize" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="startSymbol" value="-" />
+                            <option name="type" value="list-item" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value=" **mybatis.configuration.map-underscore-to-camelCase**: 设置为 `true`，表示将下划线命名转换为驼峰命名。" />
+                            <option name="contentId" value="-150667319" />
+                            <option name="indentSize" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="startSymbol" value="-" />
+                            <option name="type" value="list-item" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value=" **mybatis.configuration.cache-enabled**: 启用缓存，设为 `true`。" />
+                            <option name="contentId" value="1243567665" />
+                            <option name="indentSize" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="startSymbol" value="-" />
+                            <option name="type" value="list-item" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value=" **mybatis.configuration.log-impl**: 设置 MyBatis 的日志实现为 `org.apache.ibatis.logging.stdout.StdOutImpl`，输出到控制台。" />
+                            <option name="contentId" value="745162126" />
+                            <option name="indentSize" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="startSymbol" value="-" />
+                            <option name="type" value="list-item" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="" />
+                            <option name="contentId" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="希望这些信息对你有帮助！如果你有其他问题，请随时提问。" />
+                            <option name="contentId" value="1128836738" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="" />
+                            <option name="contentId" value="0" />
+                            <option name="settled" value="false" />
+                            <option name="type" value="undetermined" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                        </list>
+                      </option>
+                      <option name="parserState">
+                        <ParserState>
+                          <option name="line" value="18" />
+                          <option name="column" value="-1" />
+                          <option name="offset" value="1105" />
+                          <option name="moveCursor" value="true" />
+                        </ParserState>
+                      </option>
+                    </SimpleMarkdownStreamParser>
+                  </option>
+                  <option name="references">
+                    <list />
+                  </option>
+                  <option name="role" value="assistant" />
+                  <option name="topic" value="" />
+                </UIChatMessage>
+                <UIChatMessage>
+                  <option name="command" value="" />
+                  <option name="content" value="codebase功能是干嘛的" />
+                  <option name="cost" value="0" />
+                  <option name="createdAt" value="1748226106450" />
+                  <option name="localReferences">
+                    <list>
+                      <LocalReferences>
+                        <option name="isRequestStage" value="true" />
+                        <option name="range">
+                          <RefRange />
+                        </option>
+                        <option name="uri" value="{&quot;path&quot;:&quot;file:///D:/project/毕设/智慧书城/backend/src/main/resources/application.properties&quot;}" />
+                      </LocalReferences>
+                    </list>
+                  </option>
+                  <option name="parser">
+                    <SimpleMarkdownStreamParser>
+                      <option name="content" value="codebase功能是干嘛的" />
+                      <option name="nodes">
+                        <list>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="codebase功能是干嘛的" />
+                            <option name="contentId" value="75474984" />
+                            <option name="settled" value="false" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                        </list>
+                      </option>
+                      <option name="parserState">
+                        <ParserState>
+                          <option name="column" value="13" />
+                          <option name="offset" value="14" />
+                          <option name="moveCursor" value="true" />
+                        </ParserState>
+                      </option>
+                    </SimpleMarkdownStreamParser>
+                  </option>
+                  <option name="role" value="user" />
+                  <option name="selectedRanges">
+                    <list />
+                  </option>
+                  <option name="uri" value="" />
+                  <option name="variables">
+                    <list />
+                  </option>
+                </UIChatMessage>
+                <UIChatMessage>
+                  <option name="actions">
+                    <list />
+                  </option>
+                  <option name="codebaseReferences">
+                    <list />
+                  </option>
+                  <option name="codebaseStatus" value="init" />
+                  <option name="command" value="" />
+                  <option name="content" value="`codebase`在AI编程工具中通常指的是一个代码库或代码基础，它包含了构建特定应用程序或组件所需的所有源代码。以下是`codebase`的主要功能：&#10;&#10;1. **代码索引和理解**：`codebase`可以对整个项目的代码文件进行索引，从而帮助开发者更好地理解和查询代码库中的具体内容，提高工作效率。&#10;&#10;2. **静态代码分析**：通过`@Codebase`，AI工具可以使用静态代码分析工具（如AST分析）来理解项目结构。&#10;&#10;3. **语义搜索**：`codebase`功能允许快速定位代码中的关键片段，帮助开发者精准定位到某一函数定义或者变量声明处。&#10;&#10;4. **增量索引**：`codebase`能够监听代码库的变化，保持最新索引，减少不必要的重复加载。&#10;&#10;5. **代码生成和重构**：`codebase`提供全局代码上下文理解，优化代码生成和重构，提升跨文件和模块操作的准确性与效率。&#10;&#10;6. **团队协作**：明确的`codebase`和良好的代码规范可以帮助开发人员更好地理解和协作，避免因为代码理解不一致而导致的沟通障碍和开发延误。&#10;&#10;7. **维护和更新**：通过良好的`codebase`设计，开发人员可以更容易地对应用进行维护和更新，提高维护效率。&#10;&#10;希望这些信息对你有帮助！如果你有其他问题，请随时提问。" />
+                  <option name="cost" value="16440" />
+                  <option name="createdAt" value="1748226122896" />
+                  <option name="followup">
+                    <list />
+                  </option>
+                  <option name="id" value="01970a6564527117b1671d8e1778e672" />
+                  <option name="knowledgeReferences">
+                    <list />
+                  </option>
+                  <option name="localReferences">
+                    <list>
+                      <LocalReferences>
+                        <option name="isRequestStage" value="true" />
+                        <option name="range">
+                          <RefRange />
+                        </option>
+                        <option name="uri" value="{&quot;path&quot;:&quot;file:///D:/project/毕设/智慧书城/backend/src/main/resources/application.properties&quot;}" />
+                      </LocalReferences>
+                    </list>
+                  </option>
+                  <option name="parser">
+                    <SimpleMarkdownStreamParser>
+                      <option name="columns">
+                        <list>
+                          <option value="76" />
+                          <option value="-1" />
+                          <option value="73" />
+                          <option value="-1" />
+                          <option value="59" />
+                          <option value="-1" />
+                          <option value="62" />
+                          <option value="-1" />
+                          <option value="50" />
+                          <option value="-1" />
+                          <option value="64" />
+                          <option value="-1" />
+                          <option value="74" />
+                          <option value="-1" />
+                          <option value="58" />
+                          <option value="-1" />
+                          <option value="26" />
+                        </list>
+                      </option>
+                      <option name="content" value="`codebase`在AI编程工具中通常指的是一个代码库或代码基础，它包含了构建特定应用程序或组件所需的所有源代码。以下是`codebase`的主要功能：&#10;&#10;1. **代码索引和理解**：`codebase`可以对整个项目的代码文件进行索引，从而帮助开发者更好地理解和查询代码库中的具体内容，提高工作效率。&#10;&#10;2. **静态代码分析**：通过`@Codebase`，AI工具可以使用静态代码分析工具（如AST分析）来理解项目结构。&#10;&#10;3. **语义搜索**：`codebase`功能允许快速定位代码中的关键片段，帮助开发者精准定位到某一函数定义或者变量声明处。&#10;&#10;4. **增量索引**：`codebase`能够监听代码库的变化，保持最新索引，减少不必要的重复加载。&#10;&#10;5. **代码生成和重构**：`codebase`提供全局代码上下文理解，优化代码生成和重构，提升跨文件和模块操作的准确性与效率。&#10;&#10;6. **团队协作**：明确的`codebase`和良好的代码规范可以帮助开发人员更好地理解和协作，避免因为代码理解不一致而导致的沟通障碍和开发延误。&#10;&#10;7. **维护和更新**：通过良好的`codebase`设计，开发人员可以更容易地对应用进行维护和更新，提高维护效率。&#10;&#10;希望这些信息对你有帮助！如果你有其他问题，请随时提问。&#10;" />
+                      <option name="nodes">
+                        <list>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="`codebase`在AI编程工具中通常指的是一个代码库或代码基础，它包含了构建特定应用程序或组件所需的所有源代码。以下是`codebase`的主要功能：" />
+                            <option name="contentId" value="-780528585" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="" />
+                            <option name="contentId" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="1. **代码索引和理解**：`codebase`可以对整个项目的代码文件进行索引，从而帮助开发者更好地理解和查询代码库中的具体内容，提高工作效率。" />
+                            <option name="contentId" value="1034283954" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="" />
+                            <option name="contentId" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="2. **静态代码分析**：通过`@Codebase`，AI工具可以使用静态代码分析工具（如AST分析）来理解项目结构。" />
+                            <option name="contentId" value="-809081943" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="" />
+                            <option name="contentId" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="3. **语义搜索**：`codebase`功能允许快速定位代码中的关键片段，帮助开发者精准定位到某一函数定义或者变量声明处。" />
+                            <option name="contentId" value="-1537078771" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="" />
+                            <option name="contentId" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="4. **增量索引**：`codebase`能够监听代码库的变化，保持最新索引，减少不必要的重复加载。" />
+                            <option name="contentId" value="190028211" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="" />
+                            <option name="contentId" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="5. **代码生成和重构**：`codebase`提供全局代码上下文理解，优化代码生成和重构，提升跨文件和模块操作的准确性与效率。" />
+                            <option name="contentId" value="-12161616" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="" />
+                            <option name="contentId" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="6. **团队协作**：明确的`codebase`和良好的代码规范可以帮助开发人员更好地理解和协作，避免因为代码理解不一致而导致的沟通障碍和开发延误。" />
+                            <option name="contentId" value="1016748068" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="" />
+                            <option name="contentId" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="7. **维护和更新**：通过良好的`codebase`设计，开发人员可以更容易地对应用进行维护和更新，提高维护效率。" />
+                            <option name="contentId" value="1621244969" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="" />
+                            <option name="contentId" value="0" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="希望这些信息对你有帮助！如果你有其他问题，请随时提问。" />
+                            <option name="contentId" value="1128836738" />
+                            <option name="settled" value="true" />
+                            <option name="type" value="line" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                          <MarkdownNode>
+                            <option name="children">
+                              <list />
+                            </option>
+                            <option name="content" value="" />
+                            <option name="contentId" value="0" />
+                            <option name="settled" value="false" />
+                            <option name="type" value="undetermined" />
+                            <option name="xmlData">
+                              <XmlNode />
+                            </option>
+                          </MarkdownNode>
+                        </list>
+                      </option>
+                      <option name="parserState">
+                        <ParserState>
+                          <option name="line" value="17" />
+                          <option name="column" value="-1" />
+                          <option name="offset" value="568" />
+                          <option name="moveCursor" value="true" />
+                        </ParserState>
+                      </option>
+                    </SimpleMarkdownStreamParser>
+                  </option>
+                  <option name="references">
+                    <list />
+                  </option>
+                  <option name="role" value="assistant" />
+                  <option name="topic" value="" />
+                </UIChatMessage>
+              </list>
+            </option>
+            <option name="messagesV3">
+              <list>
+                <ChatMessageV3>
+                  <option name="role" value="user" />
+                  <option name="content" value="你好" />
+                  <option name="extra">
+                    <ChatMessageExtra>
+                      <option name="agent" value="default" />
+                      <option name="cmd" value="default" />
+                      <option name="code" value="# æå¡å¨ç«¯å£&#10;hvievi.klig=1919&#10;&#10;# æ°æ®åºéç½®&#10;hkirmt.wzgzhlfixv.fio=qwyx:nbhjo://olxzoslhg:6693/yllphgliv?fhvHHO=uzohv&amp;hvieviGrnvalmv=FGX&amp;zooldKfyorxPvbIvgirvezo=gifv&#10;hkirmt.wzgzhlfixv.fhvimznv=illg&#10;hkirmt.wzgzhlfixv.kzhhdliw=illg&#10;hkirmt.wzgzhlfixv.wirevi-xozhh-mznv=xln.nbhjo.xq.qwyx.Wirevi&#10;&#10;# HJOåå§åéç½®&#10;hkirmt.hjo.rmrg.nlwv=zodzbh&#10;hkirmt.hjo.rmrg.hxsvnz-olxzgrlmh=xozhhkzgs:yllphgliv_rmrg.hjo&#10;hkirmt.hjo.rmrg.xlmgrmfv-lm-viili=gifv&#10;&#10;# NbYzgrhéç½®&#10;nbyzgrh.nzkkvi-olxzgrlmh=xozhhkzgs*:nzkkvi/*.cno&#10;nbyzgrh.gbkv-zorzhvh-kzxpztv=xln.yllphgliv.vmgrgb&#10;nbyzgrh.xlmurtfizgrlm.nzk-fmwvihxliv-gl-xznvo-xzhv=gifv&#10;nbyzgrh.xlmurtfizgrlm.xzxsv-vmzyovw=gifv&#10;nbyzgrh.xlmurtfizgrlm.olt-rnko=lit.zkzxsv.ryzgrh.olttrmt.hgwlfg.HgwLfgRnko&#10;&#10;# è·¨åéç½®&#10;" />
+                      <option name="path" value="D:\project\毕设\智慧书城\backend\src\main\resources\application.properties" />
+                    </ChatMessageExtra>
+                  </option>
+                </ChatMessageV3>
+                <ChatMessageV3>
+                  <option name="role" value="assistant" />
+                  <option name="content" value="你好！看起来你提供了一个 Spring Boot 项目的 `application.properties` 文件。这个文件用于配置 Spring Boot 应用程序的各种属性。以下是一些关键配置项的解释：&#10;&#10;### 关键配置项解释&#10;&#10;- **server.port**: 设置服务器端口号为 8080。&#10;- **spring.datasource.url**: 数据库连接 URL，指向本地 MySQL 数据库 `bookstore`，并设置相关参数。&#10;- **spring.datasource.username** 和 **spring.datasource.password**: 数据库用户名和密码，均为 `root`。&#10;- **spring.datasource.driver-class-name**: 使用的 MySQL 驱动类为 `com.mysql.cj.jdbc.Driver`。&#10;- **spring.sql.init.mode**: 数据库初始化模式，设为 `always`，表示每次启动时都会执行数据库初始化脚本。&#10;- **spring.sql.init.schema-locations**: 初始化脚本的位置，指向 `classpath:bookstore_init.sql`。&#10;- **spring.sql.init.continue-on-error**: 初始化脚本执行时的错误处理方式，设为 `true` 表示即使出错也继续执行。&#10;- **mybatis.mapper-locations**: MyBatis 映射文件的位置，使用通配符 `classpath*:mapper/*.xml` 加载所有 `mapper` 目录下的 XML 文件。&#10;- **mybatis.type-aliases-package**: MyBatis 类型别名的包路径，设为 `com.bookstore.entity`。&#10;- **mybatis.configuration.map-underscore-to-camelCase**: 设置为 `true`，表示将下划线命名转换为驼峰命名。&#10;- **mybatis.configuration.cache-enabled**: 启用缓存，设为 `true`。&#10;- **mybatis.configuration.log-impl**: 设置 MyBatis 的日志实现为 `org.apache.ibatis.logging.stdout.StdOutImpl`，输出到控制台。&#10;&#10;希望这些信息对你有帮助！如果你有其他问题，请随时提问。" />
+                  <option name="extra">
+                    <ChatMessageExtra />
+                  </option>
+                </ChatMessageV3>
+                <ChatMessageV3>
+                  <option name="role" value="user" />
+                  <option name="content" value="codebase功能是干嘛的" />
+                  <option name="extra">
+                    <ChatMessageExtra>
+                      <option name="agent" value="default" />
+                      <option name="cmd" value="default" />
+                      <option name="code" value="# æå¡å¨ç«¯å£&#10;hvievi.klig=1919&#10;&#10;# æ°æ®åºéç½®&#10;hkirmt.wzgzhlfixv.fio=qwyx:nbhjo://olxzoslhg:6693/yllphgliv?fhvHHO=uzohv&amp;hvieviGrnvalmv=FGX&amp;zooldKfyorxPvbIvgirvezo=gifv&#10;hkirmt.wzgzhlfixv.fhvimznv=illg&#10;hkirmt.wzgzhlfixv.kzhhdliw=illg&#10;hkirmt.wzgzhlfixv.wirevi-xozhh-mznv=xln.nbhjo.xq.qwyx.Wirevi&#10;&#10;# HJOåå§åéç½®&#10;hkirmt.hjo.rmrg.nlwv=zodzbh&#10;hkirmt.hjo.rmrg.hxsvnz-olxzgrlmh=xozhhkzgs:yllphgliv_rmrg.hjo&#10;hkirmt.hjo.rmrg.xlmgrmfv-lm-viili=gifv&#10;&#10;# NbYzgrhéç½®&#10;nbyzgrh.nzkkvi-olxzgrlmh=xozhhkzgs*:nzkkvi/*.cno&#10;nbyzgrh.gbkv-zorzhvh-kzxpztv=xln.yllphgliv.vmgrgb&#10;nbyzgrh.xlmurtfizgrlm.nzk-fmwvihxliv-gl-xznvo-xzhv=gifv&#10;nbyzgrh.xlmurtfizgrlm.xzxsv-vmzyovw=gifv&#10;nbyzgrh.xlmurtfizgrlm.olt-rnko=lit.zkzxsv.ryzgrh.olttrmt.hgwlfg.HgwLfgRnko&#10;&#10;# è·¨åéç½®&#10;" />
+                      <option name="path" value="D:\project\毕设\智慧书城\backend\src\main\resources\application.properties" />
+                    </ChatMessageExtra>
+                  </option>
+                </ChatMessageV3>
+                <ChatMessageV3>
+                  <option name="role" value="assistant" />
+                  <option name="content" value="`codebase`在AI编程工具中通常指的是一个代码库或代码基础，它包含了构建特定应用程序或组件所需的所有源代码。以下是`codebase`的主要功能：&#10;&#10;1. **代码索引和理解**：`codebase`可以对整个项目的代码文件进行索引，从而帮助开发者更好地理解和查询代码库中的具体内容，提高工作效率。&#10;&#10;2. **静态代码分析**：通过`@Codebase`，AI工具可以使用静态代码分析工具（如AST分析）来理解项目结构。&#10;&#10;3. **语义搜索**：`codebase`功能允许快速定位代码中的关键片段，帮助开发者精准定位到某一函数定义或者变量声明处。&#10;&#10;4. **增量索引**：`codebase`能够监听代码库的变化，保持最新索引，减少不必要的重复加载。&#10;&#10;5. **代码生成和重构**：`codebase`提供全局代码上下文理解，优化代码生成和重构，提升跨文件和模块操作的准确性与效率。&#10;&#10;6. **团队协作**：明确的`codebase`和良好的代码规范可以帮助开发人员更好地理解和协作，避免因为代码理解不一致而导致的沟通障碍和开发延误。&#10;&#10;7. **维护和更新**：通过良好的`codebase`设计，开发人员可以更容易地对应用进行维护和更新，提高维护效率。&#10;&#10;希望这些信息对你有帮助！如果你有其他问题，请随时提问。" />
+                  <option name="extra">
+                    <ChatMessageExtra />
+                  </option>
+                </ChatMessageV3>
+              </list>
+            </option>
+            <option name="sessionId" value="01970a6229307117b16704075114c397" />
+          </ChatSession>
+        </option>
+        <option name="conversationId" value="01970a6229307117b16704075114c397" />
+        <option name="conversation">
+          <Conversation>
+            <option name="createTime" value="1748225893841" />
+            <option name="id" value="01970a6229307117b16704075114c397" />
+            <option name="title" value="你好" />
+            <option name="turns">
+              <list>
+                <Turn>
+                  <option name="agent" value="" />
+                  <option name="answer" value="你好！看起来你提供了一个 Hkirmt Yllg 项目的 `zkkorxzgrlm.kilkvigrvh` 文件。这个文件用于配置 Hkirmt Yllg 应用程序的各种属性。以下是一些关键配置项的解释：&#10;&#10;### 关键配置项解释&#10;&#10;- **hvievi.klig**: 设置服务器端口号为 1919。&#10;- **hkirmt.wzgzhlfixv.fio**: 数据库连接 FIO，指向本地 NbHJO 数据库 `yllphgliv`，并设置相关参数。&#10;- **hkirmt.wzgzhlfixv.fhvimznv** 和 **hkirmt.wzgzhlfixv.kzhhdliw**: 数据库用户名和密码，均为 `illg`。&#10;- **hkirmt.wzgzhlfixv.wirevi-xozhh-mznv**: 使用的 NbHJO 驱动类为 `xln.nbhjo.xq.qwyx.Wirevi`。&#10;- **hkirmt.hjo.rmrg.nlwv**: 数据库初始化模式，设为 `zodzbh`，表示每次启动时都会执行数据库初始化脚本。&#10;- **hkirmt.hjo.rmrg.hxsvnz-olxzgrlmh**: 初始化脚本的位置，指向 `xozhhkzgs:yllphgliv_rmrg.hjo`。&#10;- **hkirmt.hjo.rmrg.xlmgrmfv-lm-viili**: 初始化脚本执行时的错误处理方式，设为 `gifv` 表示即使出错也继续执行。&#10;- **nbyzgrh.nzkkvi-olxzgrlmh**: NbYzgrh 映射文件的位置，使用通配符 `xozhhkzgs*:nzkkvi/*.cno` 加载所有 `nzkkvi` 目录下的 CNO 文件。&#10;- **nbyzgrh.gbkv-zorzhvh-kzxpztv**: NbYzgrh 类型别名的包路径，设为 `xln.yllphgliv.vmgrgb`。&#10;- **nbyzgrh.xlmurtfizgrlm.nzk-fmwvihxliv-gl-xznvoXzhv**: 设置为 `gifv`，表示将下划线命名转换为驼峰命名。&#10;- **nbyzgrh.xlmurtfizgrlm.xzxsv-vmzyovw**: 启用缓存，设为 `gifv`。&#10;- **nbyzgrh.xlmurtfizgrlm.olt-rnko**: 设置 NbYzgrh 的日志实现为 `lit.zkzxsv.ryzgrh.olttrmt.hgwlfg.HgwLfgRnko`，输出到控制台。&#10;&#10;希望这些信息对你有帮助！如果你有其他问题，请随时提问。" />
+                  <option name="chatResource" value="user" />
+                  <option name="codeReferences">
+                    <list>
+                      <CodeReferencesBean>
+                        <option name="content" value="# æå¡å¨ç«¯å£&#10;hvievi.klig=1919&#10;&#10;# æ°æ®åºéç½®&#10;hkirmt.wzgzhlfixv.fio=qwyx:nbhjo://olxzoslhg:6693/yllphgliv?fhvHHO=uzohv&amp;hvieviGrnvalmv=FGX&amp;zooldKfyorxPvbIvgirvezo=gifv&#10;hkirmt.wzgzhlfixv.fhvimznv=illg&#10;hkirmt.wzgzhlfixv.kzhhdliw=illg&#10;hkirmt.wzgzhlfixv.wirevi-xozhh-mznv=xln.nbhjo.xq.qwyx.Wirevi&#10;&#10;# HJOåå§åéç½®&#10;hkirmt.hjo.rmrg.nlwv=zodzbh&#10;hkirmt.hjo.rmrg.hxsvnz-olxzgrlmh=xozhhkzgs:yllphgliv_rmrg.hjo&#10;hkirmt.hjo.rmrg.xlmgrmfv-lm-viili=gifv&#10;&#10;# NbYzgrhéç½®&#10;nbyzgrh.nzkkvi-olxzgrlmh=xozhhkzgs*:nzkkvi/*.cno&#10;nbyzgrh.gbkv-zorzhvh-kzxpztv=xln.yllphgliv.vmgrgb&#10;nbyzgrh.xlmurtfizgrlm.nzk-fmwvihxliv-gl-xznvo-xzhv=gifv&#10;nbyzgrh.xlmurtfizgrlm.xzxsv-vmzyovw=gifv&#10;nbyzgrh.xlmurtfizgrlm.olt-rnko=lit.zkzxsv.ryzgrh.olttrmt.hgwlfg.HgwLfgRnko&#10;&#10;# è·¨åéç½®&#10;" />
+                        <option name="end_line" value="22" />
+                        <option name="filename" value="application.properties" />
+                        <option name="language" value="Properties" />
+                        <option name="range">
+                          <Range>
+                            <option name="end">
+                              <Position>
+                                <option name="line" value="22" />
+                              </Position>
+                            </option>
+                            <option name="start">
+                              <Position />
+                            </option>
+                          </Range>
+                        </option>
+                        <option name="type" value="editor" />
+                        <option name="url" value="file:///D:/project/毕设/智慧书城/backend/src/main/resources/application.properties" />
+                      </CodeReferencesBean>
+                    </list>
+                  </option>
+                  <option name="command" value="" />
+                  <option name="conversationId" value="01970a6229307117b16704075114c397" />
+                  <option name="historyDocumentMap">
+                    <map>
+                      <entry key="file:///D:/project/毕设/智慧书城/backend/src/main/resources/application.properties" value="# æå¡å¨ç«¯å£&#10;server.port=8080&#10;&#10;# æ°æ®åºéç½®&#10;spring.datasource.url=jdbc:mysql://localhost:3306/bookstore?useSSL=false&amp;serverTimezone=UTC&amp;allowPublicKeyRetrieval=true&#10;spring.datasource.username=root&#10;spring.datasource.password=root&#10;spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver&#10;&#10;# SQLåå§åéç½®&#10;spring.sql.init.mode=always&#10;spring.sql.init.schema-locations=classpath:bookstore_init.sql&#10;spring.sql.init.continue-on-error=true&#10;&#10;# MyBatiséç½®&#10;mybatis.mapper-locations=classpath*:mapper/*.xml&#10;mybatis.type-aliases-package=com.bookstore.entity&#10;mybatis.configuration.map-underscore-to-camel-case=true&#10;mybatis.configuration.cache-enabled=true&#10;mybatis.configuration.log-impl=org.apache.ibatis.logging.stdout.StdOutImpl&#10;&#10;# è·¨åéç½®&#10;spring.web.cors.allowed-origins=http://localhost:5173&#10;spring.web.cors.allowed-methods=GET,POST,PUT,DELETE&#10;spring.web.cors.allowed-headers=*&#10;spring.web.cors.allow-credentials=true&#10;&#10;# åºç¨èªå®ä¹éç½®&#10;app.cors.allowed-origins=http://localhost:5173" />
+                    </map>
+                  </option>
+                  <option name="messageId" value="01970a64f92b7117b16710486b03328b" />
+                  <option name="question" value="你好" />
+                  <option name="rating" value="UNRATED" />
+                  <option name="referenceBeans">
+                    <list />
+                  </option>
+                  <option name="status" value="SUCCESS" />
+                  <option name="variables">
+                    <list />
+                  </option>
+                </Turn>
+                <Turn>
+                  <option name="agent" value="" />
+                  <option name="answer" value="`xlwvyzhv`在ZR编程工具中通常指的是一个代码库或代码基础，它包含了构建特定应用程序或组件所需的所有源代码。以下是`xlwvyzhv`的主要功能：&#10;&#10;8. **代码索引和理解**：`xlwvyzhv`可以对整个项目的代码文件进行索引，从而帮助开发者更好地理解和查询代码库中的具体内容，提高工作效率。&#10;&#10;7. **静态代码分析**：通过`@Xlwvyzhv`，ZR工具可以使用静态代码分析工具（如ZHG分析）来理解项目结构。&#10;&#10;6. **语义搜索**：`xlwvyzhv`功能允许快速定位代码中的关键片段，帮助开发者精准定位到某一函数定义或者变量声明处。&#10;&#10;5. **增量索引**：`xlwvyzhv`能够监听代码库的变化，保持最新索引，减少不必要的重复加载。&#10;&#10;4. **代码生成和重构**：`xlwvyzhv`提供全局代码上下文理解，优化代码生成和重构，提升跨文件和模块操作的准确性与效率。&#10;&#10;3. **团队协作**：明确的`xlwvyzhv`和良好的代码规范可以帮助开发人员更好地理解和协作，避免因为代码理解不一致而导致的沟通障碍和开发延误。&#10;&#10;2. **维护和更新**：通过良好的`xlwvyzhv`设计，开发人员可以更容易地对应用进行维护和更新，提高维护效率。&#10;&#10;希望这些信息对你有帮助！如果你有其他问题，请随时提问。" />
+                  <option name="chatResource" value="user" />
+                  <option name="codeReferences">
+                    <list>
+                      <CodeReferencesBean>
+                        <option name="content" value="# æå¡å¨ç«¯å£&#10;hvievi.klig=1919&#10;&#10;# æ°æ®åºéç½®&#10;hkirmt.wzgzhlfixv.fio=qwyx:nbhjo://olxzoslhg:6693/yllphgliv?fhvHHO=uzohv&amp;hvieviGrnvalmv=FGX&amp;zooldKfyorxPvbIvgirvezo=gifv&#10;hkirmt.wzgzhlfixv.fhvimznv=illg&#10;hkirmt.wzgzhlfixv.kzhhdliw=illg&#10;hkirmt.wzgzhlfixv.wirevi-xozhh-mznv=xln.nbhjo.xq.qwyx.Wirevi&#10;&#10;# HJOåå§åéç½®&#10;hkirmt.hjo.rmrg.nlwv=zodzbh&#10;hkirmt.hjo.rmrg.hxsvnz-olxzgrlmh=xozhhkzgs:yllphgliv_rmrg.hjo&#10;hkirmt.hjo.rmrg.xlmgrmfv-lm-viili=gifv&#10;&#10;# NbYzgrhéç½®&#10;nbyzgrh.nzkkvi-olxzgrlmh=xozhhkzgs*:nzkkvi/*.cno&#10;nbyzgrh.gbkv-zorzhvh-kzxpztv=xln.yllphgliv.vmgrgb&#10;nbyzgrh.xlmurtfizgrlm.nzk-fmwvihxliv-gl-xznvo-xzhv=gifv&#10;nbyzgrh.xlmurtfizgrlm.xzxsv-vmzyovw=gifv&#10;nbyzgrh.xlmurtfizgrlm.olt-rnko=lit.zkzxsv.ryzgrh.olttrmt.hgwlfg.HgwLfgRnko&#10;&#10;# è·¨åéç½®&#10;" />
+                        <option name="end_line" value="22" />
+                        <option name="filename" value="application.properties" />
+                        <option name="language" value="Properties" />
+                        <option name="range">
+                          <Range>
+                            <option name="end">
+                              <Position>
+                                <option name="line" value="22" />
+                              </Position>
+                            </option>
+                            <option name="start">
+                              <Position />
+                            </option>
+                          </Range>
+                        </option>
+                        <option name="type" value="editor" />
+                        <option name="url" value="file:///D:/project/毕设/智慧书城/backend/src/main/resources/application.properties" />
+                      </CodeReferencesBean>
+                    </list>
+                  </option>
+                  <option name="command" value="" />
+                  <option name="conversationId" value="01970a6229307117b16704075114c397" />
+                  <option name="historyDocumentMap">
+                    <map>
+                      <entry key="file:///D:/project/毕设/智慧书城/backend/src/main/resources/application.properties" value="# æå¡å¨ç«¯å£&#10;server.port=8080&#10;&#10;# æ°æ®åºéç½®&#10;spring.datasource.url=jdbc:mysql://localhost:3306/bookstore?useSSL=false&amp;serverTimezone=UTC&amp;allowPublicKeyRetrieval=true&#10;spring.datasource.username=root&#10;spring.datasource.password=root&#10;spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver&#10;&#10;# SQLåå§åéç½®&#10;spring.sql.init.mode=always&#10;spring.sql.init.schema-locations=classpath:bookstore_init.sql&#10;spring.sql.init.continue-on-error=true&#10;&#10;# MyBatiséç½®&#10;mybatis.mapper-locations=classpath*:mapper/*.xml&#10;mybatis.type-aliases-package=com.bookstore.entity&#10;mybatis.configuration.map-underscore-to-camel-case=true&#10;mybatis.configuration.cache-enabled=true&#10;mybatis.configuration.log-impl=org.apache.ibatis.logging.stdout.StdOutImpl&#10;&#10;# è·¨åéç½®&#10;spring.web.cors.allowed-origins=http://localhost:5173&#10;spring.web.cors.allowed-methods=GET,POST,PUT,DELETE&#10;spring.web.cors.allowed-headers=*&#10;spring.web.cors.allow-credentials=true&#10;&#10;# åºç¨èªå®ä¹éç½®&#10;app.cors.allowed-origins=http://localhost:5173" />
+                    </map>
+                  </option>
+                  <option name="messageId" value="01970a6564527117b1671d8e1778e672" />
+                  <option name="question" value="xlwvyzhv功能是干嘛的" />
+                  <option name="rating" value="UNRATED" />
+                  <option name="referenceBeans">
+                    <list />
+                  </option>
+                  <option name="status" value="SUCCESS" />
+                  <option name="variables">
+                    <list />
+                  </option>
+                </Turn>
+              </list>
+            </option>
+            <option name="updateTime" value="1748226120842" />
+          </Conversation>
+        </option>
+      </WebConversation>
+    </option>
+  </component>
+</project>
