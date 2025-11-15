@@ -1045,17 +1045,17 @@ const handleBookSubmit = async (formEl: any) => {
         if (dialogType.value === 'add') {
           // 添加图书
           const response = await axios.post('http://localhost:8080/api/books', editingBook.value)
-          if (response.data) {
-            books.value.push(response.data)
+          if (response.data && response.data.success && response.data.data) {
+            books.value.push(response.data.data)
             ElMessage.success('图书添加成功')
           }
         } else {
           // 更新图书
           const response = await axios.put(`http://localhost:8080/api/books/${editingBook.value.id}`, editingBook.value)
-          if (response.data) {
+          if (response.data && response.data.success && response.data.data) {
             const index = books.value.findIndex(b => b.id === editingBook.value.id)
             if (index !== -1) {
-              books.value[index] = response.data
+              books.value[index] = response.data.data
             }
             ElMessage.success('图书更新成功')
           }

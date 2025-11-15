@@ -37,7 +37,7 @@ const showUserNavbar = computed(() => {
     </div>
     <footer v-if="showUserNavbar" class="footer">
       <div class="footer-content">
-        <p>&copy; 2025 智慧书城管理系统 | 基于SSM的智慧书城管理系统的设计与实现</p>
+        <p>&copy; 2025 智慧书城管理系统 | 基于springboot的智慧书城管理系统的设计与实现</p>
       </div>
     </footer>
   </div>
