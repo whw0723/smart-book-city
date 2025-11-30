@@ -92,7 +92,7 @@ const registerForm = reactive({
   email: ''
 })
 
-const validatePass = (rule: any, value: string, callback: any) => {
+const validatePass = (_rule: any, value: string, callback: any) => {
   if (value === '') {
     callback(new Error('请再次输入密码'))
   } else if (value !== registerForm.password) {
@@ -103,7 +103,7 @@ const validatePass = (rule: any, value: string, callback: any) => {
 }
 
 // 检查用户名是否已存在
-const validateUsername = async (rule: any, value: string, callback: any) => {
+const validateUsername = (_rule: any, value: string, callback: any) => {
   if (value === '') {
     callback(new Error('请输入用户名'))
     return
@@ -115,21 +115,21 @@ const validateUsername = async (rule: any, value: string, callback: any) => {
   }
 
   // 检查用户名是否已存在
-  try {
-    checkingUsername.value = true
-    const response = await axios.post('http://localhost:8080/api/users/check-username', { username: value })
-    checkingUsername.value = false
-
-    if (response.data && response.data.exists) {
-      callback(new Error('用户名已存在，请更换其他用户名'))
-    } else {
+  checkingUsername.value = true
+  axios.post('http://localhost:8080/api/users/check-username', { username: value })
+    .then(response => {
+      checkingUsername.value = false
+      if (response.data && response.data.exists) {
+        callback(new Error('用户名已存在，请更换其他用户名'))
+      } else {
+        callback()
+      }
+    })
+    .catch(() => {
+      checkingUsername.value = false
+      // 如果接口调用失败，允许表单提交，后端会再次验证
       callback()
-    }
-  } catch (error) {
-    checkingUsername.value = false
-    // 如果接口调用失败，允许表单提交，后端会再次验证
-    callback()
-  }
+    })
 }
 
 const rules = reactive<FormRules>({

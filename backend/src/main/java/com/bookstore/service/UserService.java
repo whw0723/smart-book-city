@@ -3,6 +3,7 @@ package com.bookstore.service;
 import com.bookstore.entity.User;
 import com.bookstore.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,9 @@ public class UserService {
     
     @Autowired
     private OrderService orderService;
+    
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     /**
      * 获取所有用户
@@ -214,11 +218,15 @@ public class UserService {
     /**
      * 用户注册
      */
+    @Transactional
     public User register(User user) {
         // 检查用户名是否已存在
         if (existsByUsername(user.getUsername())) {
             throw new IllegalArgumentException("用户名已存在");
         }
+        
+        // 对密码进行加密
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         // 保存用户
         User savedUser = saveUser(user);
@@ -231,12 +239,26 @@ public class UserService {
     /**
      * 用户登录
      */
+    @Transactional
     public User login(User loginUser) {
         User user = getUserByUsername(loginUser.getUsername());
-        if (user != null && user.getPassword().equals(loginUser.getPassword())) {
-            // 不返回密码
-            user.setPassword(null);
-            return user;
+        if (user != null) {
+            // 首先尝试使用密码编码器验证（用于加密后的密码）
+            boolean passwordMatches = passwordEncoder.matches(loginUser.getPassword(), user.getPassword());
+            
+            // 如果密码验证失败，检查是否是明文密码（用于向后兼容）
+            if (!passwordMatches && user.getPassword().equals(loginUser.getPassword())) {
+                // 如果是明文密码验证成功，更新为加密密码
+                passwordMatches = true;
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+                userMapper.update(user);
+            }
+            
+            if (passwordMatches) {
+                // 不返回密码
+                user.setPassword(null);
+                return user;
+            }
         }
         throw new IllegalArgumentException("用户名或密码错误");
     }
@@ -244,6 +266,7 @@ public class UserService {
     /**
      * 修改密码
      */
+    @Transactional
     public boolean changePassword(Long id, String currentPassword, String newPassword) {
         if (currentPassword == null || newPassword == null) {
             throw new IllegalArgumentException("当前密码和新密码不能为空");
@@ -255,12 +278,12 @@ public class UserService {
         }
 
         // 验证当前密码是否正确
-        if (!user.getPassword().equals(currentPassword)) {
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
             throw new IllegalArgumentException("当前密码不正确");
         }
 
-        // 更新密码
-        user.setPassword(newPassword);
+        // 更新密码，并对新密码进行加密
+        user.setPassword(passwordEncoder.encode(newPassword));
         updateUser(user);
         return true;
     }

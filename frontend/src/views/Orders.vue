@@ -224,7 +224,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox, ElDatePicker, ElInput } from 'element-plus'
 import { useUserStore } from '../store/user'
-import { useCartStore } from '../store/cart'
+
 import { useWalletStore } from '../store/wallet'
 import axios from 'axios'
 
@@ -261,7 +261,7 @@ interface Order {
 
 const router = useRouter()
 const userStore = useUserStore()
-const cartStore = useCartStore()
+
 const walletStore = useWalletStore()
 
 const orders = ref<Order[]>([]) // 显式指定类型
@@ -270,7 +270,7 @@ const loading = ref(true)
 const bookTitleQuery = ref('')
 const authorQuery = ref('')
 const dateQuery = ref('')
-const newOrderCreated = ref(false)
+
 // 当前选中的订单类型：'pending'表示待付款订单，'completed'表示已完成订单
 const activeOrderType = ref('pending')
 // 选中的订单ID列表
@@ -286,47 +286,7 @@ const pendingTotal = ref(0)
 const completedTotal = ref(0)
 
 // 从购物车创建新订单
-const createOrderFromCart = async () => {
-  if (cartStore.items.length === 0) return
 
-  try {
-    // 检查用户是否登录
-    if (!userStore.isLoggedIn) {
-      ElMessage.warning('请先登录后再进行操作')
-      return
-    }
-
-    // 对购物车中的每个图书创建订单
-    for (const item of cartStore.items) {
-      // 调用后端 API 创建订单
-      const response = await axios.post('http://localhost:8080/api/orders/book', {
-        userId: userStore.user?.id,
-        bookId: item.book.id,
-        quantity: item.quantity
-      })
-
-      // 如果创建成功，将新订单添加到订单列表
-      if (response.data) {
-        // 刷新订单列表
-        const ordersResponse = await axios.get(`http://localhost:8080/api/orders/user/${userStore.user?.id}`)
-        if (ordersResponse.data && Array.isArray(ordersResponse.data)) {
-          orders.value = ordersResponse.data
-        }
-      }
-    }
-
-    // 清空购物车
-    cartStore.clearCart()
-
-    // 标记新订单已创建
-    newOrderCreated.value = true
-
-    ElMessage.success('订单创建成功！')
-  } catch (error: any) {
-    console.error('创建订单失败:', error)
-    ElMessage.error(`创建订单失败: ${error.message || error}`)
-  }
-}
 
 // 不再自动将购物车商品转换为订单
 // 用户需要在购物车页面主动结算才会创建订单
@@ -570,34 +530,7 @@ const completedOrders = computed(() => {
   return filterOrdersByQueries(completed)
 })
 
-// 获取其他状态订单 (暂未使用)
-// const otherOrders = computed(() => {
-//   const other = orders.value.filter(order =>
-//     !isCompletedOrder(order.status) && order.status !== 0 && order.status !== 2
-//   )
-//   return filterOrdersByQueries(other)
-// })
 
-// 计算所有订单的总数 (用于调试)
-// const totalOrdersCount = computed(() => {
-//   return pendingOrders.value.length + shippedOrders.value.length + completedOrders.value.length
-// })
-
-// 计算待付款订单的总商品数量
-const totalPendingItemsCount = computed(() => {
-  return pendingOrders.value.reduce((total, order) => {
-    return total + getTotalItems(order)
-  }, 0)
-})
-
-// 计算待付款订单的总价格
-const totalPendingOrdersAmount = computed(() => {
-  return pendingOrders.value.reduce((total, order) => {
-    return total + order.totalAmount
-  }, 0)
-})
-
-// 已移除全选相关的计算属性
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString)
@@ -608,42 +541,6 @@ const formatDate = (dateString: string) => {
     hour: '2-digit',
     minute: '2-digit'
   })
-}
-
-const getStatusText = (status: any): string => {
-  // 如果是数字，则按照后端的状态码处理
-  if (typeof status === 'number') {
-    const statusMap: { [key: number]: string } = {
-      0: '待付款',
-      1: '已完成'
-      // 已取消的订单直接删除，不再显示
-    }
-    return statusMap[status] || `未知状态(${status})`
-  }
-
-  // 兼容字符串状态
-  const statusMap: { [key: string]: string } = {
-    'pending': '待付款',
-    'completed': '已完成'
-    // 已取消的订单直接删除，不再显示
-  }
-  return statusMap[status] || status
-}
-
-// 获取状态对应的CSS类名
-const getStatusClass = (status: any): string => {
-  // 如果是数字，则按照后端的状态码处理
-  if (typeof status === 'number') {
-    const statusClassMap: { [key: number]: string } = {
-      0: 'pending',
-      1: 'completed' // 状态码1对应已完成样式
-      // 已取消的订单直接删除，不再显示
-    }
-    return statusClassMap[status] || ''
-  }
-
-  // 如果是字符串，直接返回
-  return status
 }
 
 // 判断订单是否已完成

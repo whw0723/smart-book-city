@@ -607,14 +607,6 @@ const handleSelectionChange = (selection: Book[]) => {
   isAllBooksSelected.value = selection.length > 0 && selection.length === paginatedBooks.value.length
 }
 
-// 切换图书全选/取消全选
-const toggleBookSelectAll = () => {
-  const tableRef = document.querySelector('.el-table__header-wrapper th.el-table-column--selection .el-checkbox') as HTMLElement
-  if (tableRef) {
-    tableRef.click()
-  }
-}
-
 // 批量删除图书
 const batchDeleteBooks = () => {
   if (selectedBooks.value.length === 0) {
@@ -1126,44 +1118,6 @@ const calculateUserOrderCounts = async () => {
 // 获取用户订单数
 const getUserOrderCount = (userId: number): number => {
   return userOrderCounts.value[userId] || 0
-}
-
-// 用户管理
-const deleteUser = (user: UserType) => {
-  // 如果是当前登录的用户，显示额外警告
-  const warningMessage = user.id === userStore.user?.id
-    ? `确定要删除用户 ${user.username} 吗？此操作不可恢复！\n注意：这是您当前登录的账户，删除后将自动登出。`
-    : `确定要删除用户 ${user.username} 吗？此操作不可恢复！`;
-
-  ElMessageBox.confirm(warningMessage, '警告', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(async () => {
-    try {
-      // 调用后端 API 删除用户
-      await axios.delete(`http://localhost:8080/api/users/${user.id}`)
-      // 从列表中移除已删除的用户
-      const index = users.value.findIndex(u => u.id === user.id)
-      if (index !== -1) {
-        users.value.splice(index, 1)
-      }
-
-      // 如果删除的是当前登录的用户，则登出
-      if (user.id === userStore.user?.id) {
-        ElMessage.success('删除成功，即将登出...')
-        setTimeout(() => {
-          userStore.logout()
-          router.push('/login')
-        }, 1500)
-      } else {
-        ElMessage.success('删除成功')
-      }
-    } catch (error) {
-      console.error('删除用户失败:', error)
-      ElMessage.error('删除用户失败')
-    }
-  }).catch(() => {})
 }
 
 // 订单管理相关函数

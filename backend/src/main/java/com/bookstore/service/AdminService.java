@@ -3,7 +3,9 @@ package com.bookstore.service;
 import com.bookstore.entity.Admin;
 import com.bookstore.mapper.AdminMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -15,6 +17,9 @@ public class AdminService {
 
     @Autowired
     private AdminMapper adminMapper;
+    
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     /**
      * 获取所有管理员
@@ -48,6 +53,10 @@ public class AdminService {
      * 保存管理员
      */
     public Admin saveAdmin(Admin admin) {
+        // 对密码进行加密
+        if (admin.getPassword() != null) {
+            admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+        }
         adminMapper.save(admin);
         return admin;
     }
@@ -73,20 +82,38 @@ public class AdminService {
      * @param password 密码
      * @return 登录结果，包含管理员信息或错误消息
      */
+    @Transactional
     public Map<String, Object> login(String username, String password) {
         Map<String, Object> result = new HashMap<>();
         
         Admin admin = getAdminByUsername(username);
-        if (admin != null && admin.getPassword().equals(password)) {
-            // 不返回密码
-            admin.setPassword(null);
-            result.put("success", true);
-            result.put("admin", admin);
-        } else {
-            result.put("success", false);
-            result.put("message", "管理员用户名或密码错误");
+        boolean passwordValid = false;
+        
+        if (admin != null) {
+            // 先尝试使用BCrypt验证
+            if (passwordEncoder.matches(password, admin.getPassword())) {
+                passwordValid = true;
+            } 
+            // 向后兼容：如果BCrypt验证失败，检查是否为明文密码
+            else if (admin.getPassword().equals(password)) {
+                // 明文密码匹配，更新为加密密码
+                admin.setPassword(passwordEncoder.encode(password));
+                admin.setUpdateTime(new Date());
+                updateAdmin(admin);
+                passwordValid = true;
+            }
+            
+            if (passwordValid) {
+                // 不返回密码
+                admin.setPassword(null);
+                result.put("success", true);
+                result.put("admin", admin);
+                return result;
+            }
         }
         
+        result.put("success", false);
+        result.put("message", "管理员用户名或密码错误");
         return result;
     }
     
@@ -117,6 +144,7 @@ public class AdminService {
      * @param newPassword 新密码
      * @return 包含操作结果和消息的Map
      */
+    @Transactional
     public Map<String, Object> changePassword(Long id, String currentPassword, String newPassword) {
         Map<String, Object> result = new HashMap<>();
         
@@ -136,14 +164,14 @@ public class AdminService {
             }
             
             // 验证当前密码是否正确
-            if (!admin.getPassword().equals(currentPassword)) {
+            if (!passwordEncoder.matches(currentPassword, admin.getPassword())) {
                 result.put("success", false);
                 result.put("message", "当前密码不正确");
                 return result;
             }
             
-            // 更新密码
-            admin.setPassword(newPassword);
+            // 更新密码（加密）
+            admin.setPassword(passwordEncoder.encode(newPassword));
             admin.setUpdateTime(new Date());
             updateAdmin(admin);
             

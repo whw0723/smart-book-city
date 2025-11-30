@@ -149,7 +149,10 @@ const categoryMap: Record<string, string> = {
 
 // 根据分类值获取中文名称
 const getCategoryName = (category: string | null | undefined): string => {
-
+  // 处理空值情况
+  if (!category) {
+    return '未知分类'
+  }
 
   // 清理分类字符串，去除多余的空格、换行符等
   const cleanCategory = category.trim().replace(/\s+/g, '')
@@ -166,7 +169,8 @@ const getCategoryName = (category: string | null | undefined): string => {
     }
   }
 
-
+  // 默认返回值，确保函数总是返回string类型
+  return '未知分类'
 }
 
 // 扩展Book类型，添加orderQuantity属性

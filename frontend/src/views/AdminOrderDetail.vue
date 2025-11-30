@@ -67,9 +67,9 @@
                 <tr v-for="item in orderItems" :key="item.id">
                   <td>{{ item.bookTitle || item.book?.title }}</td>
                   <td>{{ item.bookAuthor || item.book?.author }}</td>
-                  <td>¥{{ (item.price || item.book?.price).toFixed(2) }}</td>
+                  <td>¥{{ ((item.price || item.book?.price) || 0).toFixed(2) }}</td>
                   <td>{{ item.quantity }}</td>
-                  <td>¥{{ ((item.price || item.book?.price) * item.quantity).toFixed(2) }}</td>
+                  <td>¥{{ (((item.price || item.book?.price) || 0) * item.quantity).toFixed(2) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -85,7 +85,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import axios from 'axios'
 import { useUserStore } from '../store/user'
 import AdminNavbar from '../components/AdminNavbar.vue'
