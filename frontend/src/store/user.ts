@@ -29,20 +29,37 @@ export const useUserStore = defineStore('user', {
           password
         })
 
-        // 修复：只有当登录成功时才设置相应状态
-        if (response.data && response.data.success) {
-          this.user = response.data;
-          this.isLoggedIn = true;
-          // 只有当登录成功且是管理员类型时才设置isAdmin为true
-          this.isAdmin = loginType === 'admin';
-          localStorage.setItem('user', JSON.stringify(response.data));
-          localStorage.setItem('userType', loginType);
-          return { success: true };
+        // 分别处理不同登录类型的响应格式
+        if (loginType === 'admin') {
+          // 管理员登录返回格式：{success: boolean, admin: object, message?: string}
+          if (response.data && response.data.success && response.data.admin) {
+            this.user = response.data.admin;
+            this.isLoggedIn = true;
+            this.isAdmin = true;
+            localStorage.setItem('user', JSON.stringify(response.data.admin));
+            localStorage.setItem('userType', loginType);
+            return { success: true };
+          } else {
+            return {
+              success: false,
+              message: response.data?.message || '管理员登录失败，请检查用户名和密码'
+            };
+          }
         } else {
-          return {
-            success: false,
-            message: response.data?.message || '登录失败，请检查用户名和密码'
-          };
+          // 普通用户登录返回格式：直接返回用户对象
+          if (response.data && (response.data.id || response.data.username)) {
+            this.user = response.data;
+            this.isLoggedIn = true;
+            this.isAdmin = false;
+            localStorage.setItem('user', JSON.stringify(response.data));
+            localStorage.setItem('userType', loginType);
+            return { success: true };
+          } else {
+            return {
+              success: false,
+              message: response.data?.message || '登录失败，请检查用户名和密码'
+            };
+          }
         }
 
       } catch (error: any) {
