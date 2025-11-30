@@ -29,10 +29,11 @@ export const useUserStore = defineStore('user', {
           password
         })
 
-        if (response.data) {
+        // 修复：只有当登录成功时才设置相应状态
+        if (response.data && response.data.success) {
           this.user = response.data;
           this.isLoggedIn = true;
-          // 如果是管理员登录，直接设置为管理员
+          // 只有当登录成功且是管理员类型时才设置isAdmin为true
           this.isAdmin = loginType === 'admin';
           localStorage.setItem('user', JSON.stringify(response.data));
           localStorage.setItem('userType', loginType);
@@ -40,10 +41,9 @@ export const useUserStore = defineStore('user', {
         } else {
           return {
             success: false,
-            message: '登录失败，请检查用户名和密码'
+            message: response.data?.message || '登录失败，请检查用户名和密码'
           };
         }
-
 
       } catch (error: any) {
         return {

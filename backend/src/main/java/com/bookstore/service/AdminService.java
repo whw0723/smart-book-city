@@ -86,34 +86,60 @@ public class AdminService {
     public Map<String, Object> login(String username, String password) {
         Map<String, Object> result = new HashMap<>();
         
+        // 参数验证
+        if (username == null || username.trim().isEmpty()) {
+            result.put("success", false);
+            result.put("message", "用户名不能为空");
+            return result;
+        }
+        
+        if (password == null || password.isEmpty()) {
+            result.put("success", false);
+            result.put("message", "密码不能为空");
+            return result;
+        }
+        
+        // 查找管理员
         Admin admin = getAdminByUsername(username);
+        
+        // 初始密码验证状态为false
         boolean passwordValid = false;
         
-        if (admin != null) {
-            // 先尝试使用BCrypt验证
-            if (passwordEncoder.matches(password, admin.getPassword())) {
-                passwordValid = true;
-            } 
-            // 向后兼容：如果BCrypt验证失败，检查是否为明文密码
-            else if (admin.getPassword().equals(password)) {
-                // 明文密码匹配，更新为加密密码
-                admin.setPassword(passwordEncoder.encode(password));
-                admin.setUpdateTime(new Date());
-                updateAdmin(admin);
-                passwordValid = true;
-            }
+        // 只有当管理员存在且密码不为空时才进行验证
+        if (admin != null && admin.getPassword() != null && !admin.getPassword().isEmpty()) {
+            // 首先尝试使用密码编码器验证（用于加密后的密码）
+            boolean matchesEncrypted = passwordEncoder.matches(password, admin.getPassword());
             
-            if (passwordValid) {
-                // 不返回密码
-                admin.setPassword(null);
-                result.put("success", true);
-                result.put("admin", admin);
-                return result;
+            // 如果密码验证失败，检查是否是明文密码（用于向后兼容）
+            boolean matchesPlain = admin.getPassword().equals(password);
+            
+            // 只有在以下情况才认为密码有效：
+            // 1. 使用BCrypt验证成功，或者
+            // 2. 密码不是加密格式且明文匹配
+            if (matchesEncrypted || (!admin.getPassword().startsWith("$2a$") && matchesPlain)) {
+                passwordValid = true;
+                
+                // 如果是明文密码匹配，更新为加密密码
+                if (matchesPlain && !admin.getPassword().startsWith("$2a$")) {
+                    admin.setPassword(passwordEncoder.encode(password));
+                    admin.setUpdateTime(new Date());
+                    updateAdmin(admin);
+                }
             }
         }
         
-        result.put("success", false);
-        result.put("message", "管理员用户名或密码错误");
+        // 只有密码验证成功才返回管理员信息
+        if (passwordValid) {
+            // 不返回密码
+            admin.setPassword(null);
+            result.put("success", true);
+            result.put("admin", admin);
+        } else {
+            // 无论用户名是否存在，都返回相同的错误信息以防止用户名枚举攻击
+            result.put("success", false);
+            result.put("message", "管理员用户名或密码错误");
+        }
+        
         return result;
     }
     
@@ -163,8 +189,15 @@ public class AdminService {
                 return result;
             }
             
-            // 验证当前密码是否正确
-            if (!passwordEncoder.matches(currentPassword, admin.getPassword())) {
+            // 验证当前密码是否正确（支持加密密码和明文密码）
+            boolean passwordValid = passwordEncoder.matches(currentPassword, admin.getPassword());
+            
+            // 如果加密验证失败，检查是否为明文密码（向后兼容）
+            if (!passwordValid && admin.getPassword().equals(currentPassword)) {
+                passwordValid = true;
+            }
+            
+            if (!passwordValid) {
                 result.put("success", false);
                 result.put("message", "当前密码不正确");
                 return result;
