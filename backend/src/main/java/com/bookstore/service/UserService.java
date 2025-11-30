@@ -16,6 +16,9 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+    
+    @Autowired
+    private OrderService orderService;
 
     /**
      * 获取所有用户
@@ -188,5 +191,92 @@ public class UserService {
             throw new IllegalArgumentException("退款金额必须大于0");
         }
         return updateUserBalance(userId, amount);
+    }
+    
+    /**
+     * 检查用户名是否已存在
+     */
+    public Map<String, Object> checkUsername(String username) {
+        Map<String, Object> response = new HashMap<>();
+        
+        if (username == null || username.trim().isEmpty()) {
+            response.put("exists", false);
+            response.put("message", "用户名不能为空");
+            return response;
+        }
+
+        boolean exists = existsByUsername(username);
+        response.put("exists", exists);
+        response.put("message", exists ? "用户名已存在" : "用户名可用");
+        return response;
+    }
+    
+    /**
+     * 用户注册
+     */
+    public User register(User user) {
+        // 检查用户名是否已存在
+        if (existsByUsername(user.getUsername())) {
+            throw new IllegalArgumentException("用户名已存在");
+        }
+
+        // 保存用户
+        User savedUser = saveUser(user);
+
+        // 不返回密码
+        savedUser.setPassword(null);
+        return savedUser;
+    }
+    
+    /**
+     * 用户登录
+     */
+    public User login(User loginUser) {
+        User user = getUserByUsername(loginUser.getUsername());
+        if (user != null && user.getPassword().equals(loginUser.getPassword())) {
+            // 不返回密码
+            user.setPassword(null);
+            return user;
+        }
+        throw new IllegalArgumentException("用户名或密码错误");
+    }
+    
+    /**
+     * 修改密码
+     */
+    public boolean changePassword(Long id, String currentPassword, String newPassword) {
+        if (currentPassword == null || newPassword == null) {
+            throw new IllegalArgumentException("当前密码和新密码不能为空");
+        }
+        
+        User user = getUserById(id);
+        if (user == null) {
+            throw new IllegalArgumentException("用户不存在");
+        }
+
+        // 验证当前密码是否正确
+        if (!user.getPassword().equals(currentPassword)) {
+            throw new IllegalArgumentException("当前密码不正确");
+        }
+
+        // 更新密码
+        user.setPassword(newPassword);
+        updateUser(user);
+        return true;
+    }
+    
+    /**
+     * 获取用户订单数量
+     */
+    public Map<Long, Integer> getUserOrderCounts() {
+        List<User> users = getAllUsers();
+        Map<Long, Integer> orderCounts = new HashMap<>();
+
+        for (User user : users) {
+            int count = orderService.countByUserId(user.getId());
+            orderCounts.put(user.getId(), count);
+        }
+
+        return orderCounts;
     }
 }

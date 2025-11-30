@@ -1,5 +1,6 @@
 package com.bookstore.service;
 
+import com.bookstore.dto.OrderDTO;
 import com.bookstore.entity.Book;
 import com.bookstore.entity.Order;
 import com.bookstore.entity.OrderItem;
@@ -8,6 +9,9 @@ import com.bookstore.mapper.BookMapper;
 import com.bookstore.mapper.OrderItemMapper;
 import com.bookstore.mapper.OrderMapper;
 import com.bookstore.mapper.UserMapper;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -219,7 +223,7 @@ public class OrderService {
      * 更新订单状态
      */
     @Transactional
-    public Order updateOrderStatus(Long orderId, Integer status) {
+    public Order updateOrderStatusById(Long orderId, Integer status) {
         Order order = orderMapper.findById(orderId);
         if (order == null) {
             throw new RuntimeException("订单不存在");
@@ -284,6 +288,116 @@ public class OrderService {
         }
 
         return deletedCount;
+    }
+
+    /**
+     * 批量取消订单
+     */
+    @Transactional
+    public int batchCancelOrders(List<Long> orderIds) {
+        // 复用批量删除的逻辑，但不真正删除记录，而是修改状态
+        int cancelledCount = 0;
+        
+        for (Long orderId : orderIds) {
+            Order order = orderMapper.findById(orderId);
+            if (order != null && order.getStatus() != 3) { // 不是已取消状态
+                order.setStatus(3); // 设置为已取消
+                order.setOrderDate(LocalDateTime.now());
+                orderMapper.update(order);
+                cancelledCount++;
+            }
+        }
+        return cancelledCount;
+    }
+
+    // 获取用户订单列表并转换为DTO
+    public List<OrderDTO> getUserOrdersWithDTO(Long userId) {
+        List<Order> orders = orderMapper.findByUserIdOrderByOrderDateDesc(userId);
+        return orders.stream()
+            .map(OrderDTO::new)
+            .collect(Collectors.toList());
+    }
+    
+    // 从book创建订单（处理参数解析逻辑）
+    @Transactional
+    public Order createOrderFromBookWithPayload(Map<String, Object> payload) {
+        Long userId = Long.parseLong(payload.get("userId").toString());
+        Long bookId = Long.parseLong(payload.get("bookId").toString());
+        Integer quantity = Integer.parseInt(payload.get("quantity").toString());
+        
+        return createOrderFromBook(userId, bookId, quantity);
+    }
+
+    /**
+     * 从payload创建订单
+     */
+    @Transactional
+    public Order createOrderFromPayload(Map<String, Object> payload) {
+        Long userId = Long.valueOf(payload.get("userId").toString());
+        List<OrderItem> orderItems = new ArrayList<>();
+        
+        // 解析订单项
+        List<Map<String, Object>> items = (List<Map<String, Object>>) payload.get("items");
+        for (Map<String, Object> item : items) {
+            OrderItem orderItem = new OrderItem();
+            Long bookId = Long.valueOf(item.get("bookId").toString());
+            Integer quantity = Integer.valueOf(item.get("quantity").toString());
+            
+            // 查询书籍信息
+            Book book = bookMapper.findById(bookId);
+            if (book == null) {
+                throw new RuntimeException("书籍不存在: " + bookId);
+            }
+            
+            orderItem.setBook(book);
+            orderItem.setQuantity(quantity);
+            orderItem.setPrice(book.getPrice());
+            orderItems.add(orderItem);
+        }
+        
+        return createOrder(userId, orderItems);
+    }
+
+    /**
+     * 分页获取用户订单并转换为DTO
+     */
+    public Map<String, Object> getUserOrdersPagedWithDTO(Long userId, int page, int size) {
+        Map<String, Object> response = getUserOrdersPaged(userId, page, size);
+        
+        // 将订单转换为DTO
+        if (response.containsKey("orders")) {
+            @SuppressWarnings("unchecked")
+            List<Order> orders = (List<Order>) response.get("orders");
+            List<OrderDTO> orderDTOs = orders.stream()
+                .map(OrderDTO::new)
+                .collect(Collectors.toList());
+            response.put("orders", orderDTOs);
+        }
+        
+        return response;
+    }
+
+    /**
+     * 更新订单状态，处理特殊状态
+     */
+    @Transactional
+    public Order updateOrderStatus(Long id, Integer status) {
+        // 如果状态是取消(2)，则直接删除订单
+        if (status == 2) {
+            cancelOrder(id);
+            return null; // 返回null表示订单已取消
+        }
+        
+        // 其他状态正常更新
+        Order order = orderMapper.findById(id);
+        if (order == null) {
+            throw new RuntimeException("订单不存在");
+        }
+        
+        order.setStatus(status);
+        orderMapper.update(order);
+        
+        return orderMapper.findById(id);
     }
 
     /**
