@@ -1270,7 +1270,38 @@ const generateMockOrderStatusData = (): OrderStatusItem[] => {
 // 加载统计摘要数据
 const loadStatisticsSummary = async () => {
   try {
-    // 如果有真实订单数据，计算真实的总销售额
+    // 调用后端API获取仪表盘统计数据
+    const response = await axios.get('http://localhost:8080/api/statistics/dashboard')
+    
+    if (response.data) {
+      // 更新四个卡片的数据
+      totalSales.value = response.data.totalSales ? response.data.totalSales.toFixed(2) : '0.00'
+      totalOrders.value = response.data.totalOrders || 0
+      totalUsers.value = response.data.totalUsers || 0
+      totalBooks.value = response.data.totalBooks || 0
+    } else {
+      // 如果API返回空数据，使用已有数据计算
+      if (orders.value.length > 0) {
+        totalSales.value = orders.value.reduce((sum, order) => {
+          // 只计算已支付和已完成的订单
+          if (order.status === 1 || order.status === 2 || order.status === 3) {
+            return sum + order.totalAmount
+          }
+          return sum
+        }, 0).toFixed(2)
+      } else {
+        // 使用模拟数据
+        totalSales.value = '0.00'
+      }
+
+      // 获取总订单数、用户数和图书数
+      totalOrders.value = orderTotal.value > 0 ? orderTotal.value : 0
+      totalUsers.value = userTotal.value > 0 ? userTotal.value : 0
+      totalBooks.value = books.value.length > 0 ? books.value.length : 0
+    }
+  } catch (error) {
+    console.error('加载统计摘要数据失败:', error)
+    // 使用已有数据计算
     if (orders.value.length > 0) {
       totalSales.value = orders.value.reduce((sum, order) => {
         // 只计算已支付和已完成的订单
@@ -1281,20 +1312,13 @@ const loadStatisticsSummary = async () => {
       }, 0).toFixed(2)
     } else {
       // 使用模拟数据
-      totalSales.value = '125680.50'
+      totalSales.value = '0.00'
     }
 
     // 获取总订单数、用户数和图书数
-    totalOrders.value = orderTotal.value > 0 ? orderTotal.value : 336
-    totalUsers.value = userTotal.value > 0 ? userTotal.value : 1
-    totalBooks.value = books.value.length > 0 ? books.value.length : 1167
-  } catch (error) {
-    console.error('加载统计摘要数据失败:', error)
-    // 使用默认模拟数据
-    totalSales.value = '125680.50'
-    totalOrders.value = 336
-    totalUsers.value = 1
-    totalBooks.value = 1167
+    totalOrders.value = orderTotal.value > 0 ? orderTotal.value : 0
+    totalUsers.value = userTotal.value > 0 ? userTotal.value : 0
+    totalBooks.value = books.value.length > 0 ? books.value.length : 0
   }
 }
 
@@ -1304,28 +1328,43 @@ const loadStatisticsData = async () => {
     // 加载统计摘要数据
     await loadStatisticsSummary()
 
-    // 直接使用模拟数据，确保数据显示
-    console.log('使用模拟数据进行展示')
+    // 调用真实API获取数据
+    console.log('使用真实API数据进行展示')
     
     // 加载销售统计数据
-    salesData.value = generateMockSalesData(salesPeriod.value)
+    const salesResponse = await axios.get('http://localhost:8080/api/statistics/sales', {
+      params: { period: salesPeriod.value }
+    })
+    salesData.value = salesResponse.data || []
     console.log('销售统计数据:', salesData.value)
 
     // 加载畅销书籍排行数据
-    topBooksData.value = generateMockTopBooksData()
+    const topBooksResponse = await axios.get('http://localhost:8080/api/statistics/top-books', {
+      params: { limit: 10 }
+    })
+    topBooksData.value = topBooksResponse.data || []
     console.log('畅销书籍排行数据:', topBooksData.value)
 
     // 加载分类销售比例数据
-    categoryData.value = generateMockCategoryData()
+    const categoryResponse = await axios.get('http://localhost:8080/api/statistics/category-sales')
+    categoryData.value = categoryResponse.data || []
     console.log('分类数据:', categoryData.value)
 
     // 加载订单状态分布数据
-    orderStatusData.value = generateMockOrderStatusData()
+    const orderStatusResponse = await axios.get('http://localhost:8080/api/statistics/order-status')
+    orderStatusData.value = orderStatusResponse.data || []
     console.log('订单状态数据:', orderStatusData.value)
 
   } catch (error) {
     console.error('加载统计数据失败:', error)
     ElMessage.error('加载统计数据失败')
+    
+    // 如果API调用失败，回退到模拟数据
+    console.log('API调用失败，使用模拟数据进行展示')
+    salesData.value = generateMockSalesData(salesPeriod.value)
+    topBooksData.value = generateMockTopBooksData()
+    categoryData.value = generateMockCategoryData()
+    orderStatusData.value = generateMockOrderStatusData()
   }
 }
 

@@ -142,6 +142,17 @@ public class OrderService {
             throw new RuntimeException("用户不存在");
         }
 
+        // 检查库存并减少库存
+        for (OrderItem item : items) {
+            Book book = item.getBook();
+            if (book.getStock() < item.getQuantity()) {
+                throw new RuntimeException("库存不足：" + book.getTitle());
+            }
+            // 减少库存
+            book.setStock(book.getStock() - item.getQuantity());
+            bookMapper.update(book);
+        }
+
         // 创建订单
         Order order = new Order();
         order.setUser(user);
@@ -187,6 +198,14 @@ public class OrderService {
         if (book == null) {
             throw new RuntimeException("图书不存在");
         }
+
+        // 检查库存并减少库存
+        if (book.getStock() < quantity) {
+            throw new RuntimeException("库存不足：" + book.getTitle());
+        }
+        // 减少库存
+        book.setStock(book.getStock() - quantity);
+        bookMapper.update(book);
 
         // 创建订单
         Order order = new Order();

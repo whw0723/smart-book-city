@@ -3,6 +3,7 @@ package com.bookstore.service;
 import com.bookstore.entity.Book;
 import com.bookstore.entity.Order;
 import com.bookstore.entity.OrderItem;
+import com.bookstore.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,9 @@ public class StatisticsService {
 
     @Autowired
     private BookService bookService;
+    
+    @Autowired
+    private UserService userService;
 
     /**
      * 获取销售统计数据
@@ -362,5 +366,37 @@ public class StatisticsService {
         }
 
         return yearlySales;
+    }
+    
+    /**
+     * 获取仪表盘统计数据
+     * @return 包含总销售额、总订单数、用户总数、图书总数的数据
+     */
+    public Map<String, Object> getDashboardStatistics() {
+        Map<String, Object> result = new HashMap<>();
+        
+        // 1. 获取总销售额（只统计已完成的订单）
+        List<Order> orders = orderService.getAllOrders();
+        BigDecimal totalSales = orders.stream()
+                .filter(order -> order.getStatus() == 1) // 只统计已完成的订单
+                .map(Order::getTotalAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        result.put("totalSales", totalSales);
+        
+        // 2. 获取总订单数
+        int totalOrders = orders.size();
+        result.put("totalOrders", totalOrders);
+        
+        // 3. 获取用户总数
+        List<User> users = userService.getAllUsers();
+        int totalUsers = users.size();
+        result.put("totalUsers", totalUsers);
+        
+        // 4. 获取图书总数
+        List<Book> books = bookService.getAllBooks();
+        int totalBooks = books.size();
+        result.put("totalBooks", totalBooks);
+        
+        return result;
     }
 }

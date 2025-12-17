@@ -53,4 +53,13 @@ public class StatisticsController {
     public ResponseEntity<?> getOrderStatusDistribution() {
         return ResponseEntity.ok(statisticsService.getOrderStatusDistribution());
     }
+    
+    /**
+     * 获取仪表盘统计数据
+     * @return 包含总销售额、总订单数、用户总数、图书总数的数据
+     */
+    @GetMapping("/dashboard")
+    public ResponseEntity<?> getDashboardStatistics() {
+        return ResponseEntity.ok(statisticsService.getDashboardStatistics());
+    }
 }
