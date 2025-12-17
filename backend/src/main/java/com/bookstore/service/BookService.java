@@ -81,11 +81,26 @@ public class BookService {
      * 根据标题和作者组合查询
      */
     public List<Book> searchBooksByTitleAndAuthor(String title, String author) {
-        List<Book> titleResults = bookMapper.findByTitleContaining(title);
-        // 从标题结果中筛选出作者匹配的图书
-        return titleResults.stream()
-            .filter(book -> book.getAuthor().toLowerCase().contains(author.toLowerCase()))
-            .collect(Collectors.toList());
+        // 同时提供标题和作者搜索条件
+        if (title != null && author != null) {
+            List<Book> titleResults = bookMapper.findByTitleContaining(title);
+            // 从标题结果中筛选出作者匹配的图书
+            return titleResults.stream()
+                .filter(book -> book.getAuthor().toLowerCase().contains(author.toLowerCase()))
+                .collect(Collectors.toList());
+        } 
+        // 只提供标题搜索条件
+        else if (title != null) {
+            return bookMapper.findByTitleContaining(title);
+        } 
+        // 只提供作者搜索条件
+        else if (author != null) {
+            return bookMapper.findByAuthorContaining(author);
+        } 
+        // 没有提供搜索条件，返回所有图书
+        else {
+            return bookMapper.findAll();
+        }
     }
     
     /**
