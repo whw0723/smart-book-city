@@ -11,10 +11,8 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -40,13 +38,12 @@ jobs:
         run: ls -la ./frontend/dist
         shell: bash
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: ./frontend/dist
-
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./frontend/dist
+          publish_branch: gh-pages
+          enable_jekyll: false
+          allow_empty_commit: true
+          force_orphan: true
