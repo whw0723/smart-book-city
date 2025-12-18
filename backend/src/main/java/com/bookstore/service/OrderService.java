@@ -418,6 +418,53 @@ public class OrderService {
         
         return orderMapper.findById(id);
     }
+    
+    /**
+     * 查找并取消所有超过5分钟未支付的订单
+     */
+    @Transactional
+    public void cancelAllOverdueOrders() {
+        // 获取当前时间
+        LocalDateTime now = LocalDateTime.now();
+        // 计算5分钟前的时间
+        LocalDateTime fiveMinutesAgo = now.minusMinutes(5);
+        
+        // 查询所有待支付订单
+        List<Order> allOrders = orderMapper.findAll();
+        
+        // 过滤出超过5分钟的订单
+        List<Order> overdueOrders = allOrders.stream()
+            .filter(order -> order.getStatus() == 0 && order.getOrderDate().isBefore(fiveMinutesAgo))
+            .collect(Collectors.toList());
+        
+        // 取消所有过期订单
+        for (Order order : overdueOrders) {
+            try {
+                // 获取订单的订单项
+                List<OrderItem> orderItems = orderItemMapper.findByOrderId(order.getId());
+                
+                // 恢复库存
+                for (OrderItem item : orderItems) {
+                    Book book = bookMapper.findById(item.getBook().getId());
+                    if (book != null) {
+                        // 恢复库存
+                        book.setStock(book.getStock() + item.getQuantity());
+                        bookMapper.update(book);
+                    }
+                }
+                
+                // 删除订单项
+                orderItemMapper.deleteByOrderId(order.getId());
+                
+                // 删除订单
+                orderMapper.deleteById(order.getId());
+                
+                System.out.println("自动取消超时订单：" + order.getOrderNumber());
+            } catch (Exception e) {
+                System.err.println("取消订单失败：" + order.getOrderNumber() + "，错误：" + e.getMessage());
+            }
+        }
+    }
 
     /**
      * 生成订单号

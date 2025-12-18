@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS users (
   phone VARCHAR(20),
   address VARCHAR(200),
   balance DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-  role INT DEFAULT 0 -- 0表示普通用户
+  role INT DEFAULT 0 
 );
 
 -- 图书表
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS orders (
   user_id BIGINT NOT NULL,
   order_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   total_amount DECIMAL(10,2) NOT NULL,
-  status INT DEFAULT 0, -- 0=待支付, 1=已支付, 2=已发货, 3=已完成, 4=已取消
+  status INT DEFAULT 0, 
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
@@ -73,10 +73,10 @@ CREATE TABLE IF NOT EXISTS wallet_transaction (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   wallet_id BIGINT NOT NULL,
   amount DECIMAL(10,2) NOT NULL,
-  type VARCHAR(20) NOT NULL, -- 'DEPOSIT'=充值, 'WITHDRAW'=提现, 'PAYMENT'=支付, 'REFUND'=退款
+  type VARCHAR(20) NOT NULL, 
   description VARCHAR(255),
   related_order_id BIGINT,
-  status VARCHAR(20) NOT NULL DEFAULT 'SUCCESS', -- 'SUCCESS'=成功, 'FAILED'=失败, 'PENDING'=处理中
+  status VARCHAR(20) NOT NULL DEFAULT 'SUCCESS', 
   create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (wallet_id) REFERENCES wallet(id),
   FOREIGN KEY (related_order_id) REFERENCES orders(id) ON DELETE SET NULL

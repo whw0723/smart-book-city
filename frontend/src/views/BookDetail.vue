@@ -54,6 +54,7 @@ import { ElMessage } from 'element-plus'
 import { useBookStore, type Book } from '../store/books'
 import { useUserStore } from '../store/user'
 import { useCartStore } from '../store/cart'
+import { useOrdersStore } from '../store/orders'
 import axios from 'axios'
 
 // 图书分类映射 - 将所有分类归并到7个主分类
@@ -101,6 +102,7 @@ const router = useRouter()
 const bookStore = useBookStore()
 const userStore = useUserStore()
 const cartStore = useCartStore()
+const ordersStore = useOrdersStore()
 
 // 根据分类值获取中文名称
 const getCategoryName = (category: string | null | undefined): string => {
@@ -170,15 +172,18 @@ const addToOrder = async () => {
     })
 
     // 成功提示，但不跳转页面
-    ElMessage.success({
-      message: `已将 ${quantity.value} 本《${book.value.title}》加入订单`,
-      duration: 1000,
-      showClose: true,
-      type: 'success'
-    })
+      ElMessage.success({
+        message: `已将 ${quantity.value} 本《${book.value.title}》加入订单`,
+        duration: 1000,
+        showClose: true,
+        type: 'success'
+      })
 
-    // 重置数量为1
-    quantity.value = 1
+      // 立即更新待支付订单数量
+      await ordersStore.updatePendingOrdersCount()
+
+      // 重置数量为1
+      quantity.value = 1
 
   } catch (error) {
     console.error('创建订单失败:', error)

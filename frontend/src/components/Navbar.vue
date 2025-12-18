@@ -12,7 +12,10 @@
           购物车
           <span v-if="cartStore.totalItems > 0" class="cart-badge">{{ cartStore.totalItems }}</span>
         </router-link>
-        <router-link v-if="userStore.isLoggedIn" to="/orders" class="nav-item" :class="{ 'active': isActive('/orders') }">我的订单</router-link>
+        <router-link v-if="userStore.isLoggedIn" to="/orders" class="nav-item order-item" :class="{ 'active': isActive('/orders') }">
+          我的订单
+          <span v-if="ordersStore.pendingOrdersCount > 0" class="order-badge">{{ ordersStore.pendingOrdersCount }}</span>
+        </router-link>
         <router-link v-if="userStore.isLoggedIn" to="/profile" class="nav-item" :class="{ 'active': isActive('/profile') }">个人中心</router-link>
       </div>
 
@@ -38,12 +41,14 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '../store/user'
 import { useCartStore } from '../store/cart'
 import { useBookStore } from '../store/books'
+import { useOrdersStore } from '../store/orders'
 
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
 const cartStore = useCartStore()
 const bookStore = useBookStore()
+const ordersStore = useOrdersStore()
 const isRefreshing = ref(false)
 
 // 检查当前路由是否匹配
@@ -51,9 +56,13 @@ const isActive = (path: string) => {
   return route.path === path
 }
 
-onMounted(() => {
+onMounted(async () => {
   userStore.initializeFromLocalStorage()
   cartStore.loadFromLocalStorage()
+  // 初始化待支付订单数量
+  if (userStore.isLoggedIn) {
+    await ordersStore.updatePendingOrdersCount()
+  }
 })
 
 // 点击首页时触发，强制重新获取图书数据
@@ -186,7 +195,7 @@ const logout = () => {
   background-color: #409EFF;
 }
 
-.cart-item {
+.cart-item, .order-item {
   position: relative;
   display: flex;
   align-items: center;
@@ -197,7 +206,7 @@ const logout = () => {
   font-size: 18px;
 }
 
-.cart-badge {
+.cart-badge, .order-badge {
   position: absolute;
   top: 10px;
   right: -8px;

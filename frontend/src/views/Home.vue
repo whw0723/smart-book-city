@@ -125,6 +125,7 @@ import { useBookStore } from '../store/books'
 import type { Book } from '../store/books' // 使用 type-only 导入
 import { useUserStore } from '../store/user'
 import { useCartStore } from '../store/cart'
+import { useOrdersStore } from '../store/orders'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import axios from 'axios'
 
@@ -182,6 +183,7 @@ const route = useRoute()
 const bookStore = useBookStore()
 const userStore = useUserStore()
 const cartStore = useCartStore()
+const ordersStore = useOrdersStore()
 
 const searchTitle = ref('')
 const searchAuthor = ref('')
@@ -431,6 +433,9 @@ const addToOrder = async (book: BookWithQuantity) => {
         showClose: true,
         type: 'success'
       })
+
+      // 立即更新待支付订单数量
+      await ordersStore.updatePendingOrdersCount()
 
       // 重置数量为1
       book.orderQuantity = 1

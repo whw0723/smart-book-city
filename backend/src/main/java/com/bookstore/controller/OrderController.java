@@ -117,5 +117,15 @@ public class OrderController {
             "message", "成功取消 " + cancelledCount + " 个订单"
         ));
     }
+    
+    @PostMapping("/check-overdue")
+    public ResponseEntity<Map<String, Object>> checkOverdueOrders() {
+        // 调用service层的检查并取消过期订单方法
+        orderService.cancelAllOverdueOrders();
+        return ResponseEntity.ok().body(Map.of(
+            "success", true,
+            "message", "成功检查并取消过期订单"
+        ));
+    }
 }
 

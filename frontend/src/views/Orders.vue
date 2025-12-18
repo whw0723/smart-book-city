@@ -110,6 +110,10 @@
                       <p class="order-number">订单号: {{ order.orderNumber }}</p>
                       <p class="order-date">下单时间: {{ formatDate(order.orderDate) }}</p>
                     </div>
+                    <div class="order-countdown" v-if="order.status === 0">
+                      <span class="countdown-text">剩余支付时间: </span>
+                      <span class="countdown-timer">{{ order.countdownText || '30:00' }}</span>
+                    </div>
                   </div>
 
                   <div class="order-items">
@@ -220,12 +224,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox, ElDatePicker, ElInput } from 'element-plus'
 import { useUserStore } from '../store/user'
-
 import { useWalletStore } from '../store/wallet'
+import { useOrdersStore } from '../store/orders'
 import axios from 'axios'
 
 // 定义 Order 和 OrderItem 接口
@@ -257,12 +261,15 @@ interface Order {
   items?: OrderItem[];
   orderItems?: OrderItem[];
   user?: any;
+  remainingTime?: number; // 剩余支付时间（秒）
+  countdownText?: string; // 格式化的倒计时文本
 }
 
 const router = useRouter()
 const userStore = useUserStore()
 
 const walletStore = useWalletStore()
+const ordersStore = useOrdersStore()
 
 const orders = ref<Order[]>([]) // 显式指定类型
 const loading = ref(true)
@@ -274,9 +281,8 @@ const dateQuery = ref('')
 // 当前选中的订单类型：'pending'表示待付款订单，'completed'表示已完成订单
 const activeOrderType = ref('pending')
 // 选中的订单ID列表
-const selectedOrderIds = ref<number[]>([])
-// 是否全选
-const isAllSelected = ref(false)
+const selectedOrderIds = ref<number[]>([]) // 选中的订单ID列表
+const isAllSelected = ref(false) // 是否全选
 
 // 分页相关
 const pageSize = ref(9) // 每页显示9个订单
@@ -284,6 +290,10 @@ const pendingCurrentPage = ref(1)
 const completedCurrentPage = ref(1)
 const pendingTotal = ref(0)
 const completedTotal = ref(0)
+
+// 倒计时相关
+const countdownTimer = ref<number | null>(null) // 倒计时定时器
+const PAYMENT_TIMEOUT = 5 * 60 // 支付超时时间（5分钟，单位：秒）
 
 // 从购物车创建新订单
 
@@ -330,6 +340,9 @@ onMounted(async () => {
   try {
     loading.value = true
 
+    // 先检查并取消过期订单
+    await axios.post('http://localhost:8080/api/orders/check-overdue')
+    
     // 加载待付款订单（第一页）
     await loadPendingOrders()
 
@@ -337,6 +350,12 @@ onMounted(async () => {
     await loadCompletedOrders()
 
     loading.value = false
+    
+    // 更新待支付订单数量
+    await ordersStore.updatePendingOrdersCount()
+    
+    // 启动倒计时定时器
+    startCountdownTimer()
 
     // 不再自动将购物车商品转换为订单
     // 用户需要在购物车页面主动结算才会创建订单
@@ -349,9 +368,17 @@ onMounted(async () => {
   }
 })
 
+// 在组件销毁时停止定时器
+onUnmounted(() => {
+  stopCountdownTimer()
+})
+
 // 加载待付款订单
 const loadPendingOrders = async () => {
   try {
+    // 先检查并取消过期订单
+    await axios.post('http://localhost:8080/api/orders/check-overdue')
+    
     // 获取所有订单，以便正确计算分页
     const response = await axios.get(`http://localhost:8080/api/orders/user/${userStore.user?.id}`)
 
@@ -364,6 +391,9 @@ const loadPendingOrders = async () => {
 
       // 计算总数
       pendingTotal.value = allPendingOrders.length
+      
+      // 更新待支付订单数量
+      ordersStore.pendingOrdersCount = allPendingOrders.length
 
       // 确保当前页码有效
       const maxPage = Math.ceil(allPendingOrders.length / pageSize.value) || 1
@@ -394,12 +424,16 @@ const loadPendingOrders = async () => {
 
       // 更新总数
       pendingTotal.value = response.data.total
+      // 更新待支付订单数量
+      ordersStore.pendingOrdersCount = pendingTotal.value
       console.log('从分页API获取到待付款订单数据:', pendingOrdersData)
     } else {
       console.warn('后端返回的订单数据格式不正确')
       if (activeOrderType.value === 'pending') {
         orders.value = [] // 清空订单列表
       }
+      // 更新待支付订单数量
+      ordersStore.pendingOrdersCount = 0
     }
   } catch (error) {
     console.error('加载待付款订单失败:', error)
@@ -532,6 +566,72 @@ const completedOrders = computed(() => {
 
 
 
+// 计算订单剩余支付时间（秒）
+const calculateRemainingTime = (orderDate: string): number => {
+  const orderTime = new Date(orderDate).getTime()
+  const nowTime = new Date().getTime()
+  const elapsedSeconds = Math.floor((nowTime - orderTime) / 1000)
+  const remainingSeconds = PAYMENT_TIMEOUT - elapsedSeconds
+  return Math.max(remainingSeconds, 0) // 确保不返回负数
+}
+
+// 格式化倒计时文本
+const formatCountdown = (seconds: number): string => {
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = seconds % 60
+  return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
+}
+
+// 更新所有待付款订单的倒计时
+const updateCountdowns = () => {
+  orders.value.forEach(order => {
+    if (order.status === 0) {
+      const remainingTime = calculateRemainingTime(order.orderDate)
+      order.remainingTime = remainingTime
+      order.countdownText = formatCountdown(remainingTime)
+      
+      // 如果倒计时结束，刷新订单列表
+      if (remainingTime <= 0) {
+        // 提示用户订单已过期
+        ElMessage.warning({
+          message: `订单 ${order.orderNumber} 已超过5分钟未支付，已自动取消`,
+          duration: 1000
+        })
+        // 刷新订单列表
+        if (activeOrderType.value === 'pending') {
+          loadPendingOrders()
+        } else {
+          loadCompletedOrders()
+        }
+      }
+    }
+  })
+}
+
+// 启动倒计时定时器
+const startCountdownTimer = () => {
+  // 清除之前的定时器
+  if (countdownTimer.value) {
+    clearInterval(countdownTimer.value)
+  }
+  
+  // 更新一次倒计时
+  updateCountdowns()
+  
+  // 每秒更新一次倒计时
+  countdownTimer.value = window.setInterval(() => {
+    updateCountdowns()
+  }, 1000)
+}
+
+// 停止倒计时定时器
+const stopCountdownTimer = () => {
+  if (countdownTimer.value) {
+    clearInterval(countdownTimer.value)
+    countdownTimer.value = null
+  }
+}
+
 const formatDate = (dateString: string) => {
   const date = new Date(dateString)
   return date.toLocaleString('zh-CN', {
@@ -640,12 +740,19 @@ const payOrder = (orderId: number) => {
 
       // 调用钱包支付API
       await walletStore.payOrder(orderId)
-      ElMessage.success('支付成功')
+      ElMessage.success({
+        message: '支付成功',
+        duration: 1000
+      })
 
       // 刷新订单列表
       const response = await axios.get(`http://localhost:8080/api/orders/user/${userStore.user?.id}`)
       if (response.data && Array.isArray(response.data)) {
         orders.value = response.data
+        
+        // 立即更新待支付订单数量
+        const pendingOrders = response.data.filter((order: Order) => order.status === 0)
+        ordersStore.pendingOrdersCount = pendingOrders.length
       }
     } catch (error: any) {
       console.error('支付失败:', error)
@@ -676,12 +783,19 @@ const cancelOrder = (orderId: number) => {
     try {
       // 调用后端API取消订单（直接删除）
       await axios.put(`http://localhost:8080/api/orders/${orderId}/cancel`)
-      ElMessage.success('订单已取消')
+      ElMessage.success({
+        message: '订单已取消',
+        duration: 1000
+      })
 
       // 刷新订单列表
       const response = await axios.get(`http://localhost:8080/api/orders/user/${userStore.user?.id}`)
       if (response.data && Array.isArray(response.data)) {
         orders.value = response.data
+        
+        // 立即更新待支付订单数量
+        const pendingOrders = response.data.filter((order: Order) => order.status === 0)
+        ordersStore.pendingOrdersCount = pendingOrders.length
       }
     } catch (error: any) {
       console.error('取消订单失败:', error)
@@ -747,7 +861,10 @@ const batchCancelOrders = () => {
     try {
       // 批量取消订单（直接删除）
       await axios.put(`http://localhost:8080/api/orders/batch/cancel`, selectedOrderIds.value)
-      ElMessage.success(`已成功取消 ${selectedOrderIds.value.length} 个订单`)
+      ElMessage.success({
+        message: `已成功取消 ${selectedOrderIds.value.length} 个订单`,
+        duration: 1000
+      })
 
       // 清空选择
       selectedOrderIds.value = []
@@ -756,6 +873,10 @@ const batchCancelOrders = () => {
       const response = await axios.get(`http://localhost:8080/api/orders/user/${userStore.user?.id}`)
       if (response.data && Array.isArray(response.data)) {
         orders.value = response.data
+        
+        // 立即更新待支付订单数量
+        const pendingOrders = response.data.filter((order: Order) => order.status === 0)
+        ordersStore.pendingOrdersCount = pendingOrders.length
       }
     } catch (error: any) {
       console.error('批量取消订单失败:', error)
@@ -803,7 +924,10 @@ const batchPayOrders = async () => {
 
       // 调用批量支付API
       await walletStore.batchPayOrders(selectedOrderIds.value)
-      ElMessage.success('批量支付成功')
+      ElMessage.success({
+        message: '批量支付成功',
+        duration: 1000
+      })
 
       // 清空选择
       selectedOrderIds.value = []
@@ -812,6 +936,10 @@ const batchPayOrders = async () => {
       const response = await axios.get(`http://localhost:8080/api/orders/user/${userStore.user?.id}`)
       if (response.data && Array.isArray(response.data)) {
         orders.value = response.data
+        
+        // 立即更新待支付订单数量
+        const pendingOrders = response.data.filter((order: Order) => order.status === 0)
+        ordersStore.pendingOrdersCount = pendingOrders.length
       }
     } catch (error: any) {
       console.error('批量支付失败:', error)
@@ -877,7 +1005,10 @@ const applySearch = () => {
     loadCompletedOrders()
   }
 
-  ElMessage.success('搜索条件已应用')
+  ElMessage.success({
+    message: '搜索条件已应用',
+    duration: 1000
+  })
 }
 
 // 重置搜索
@@ -897,7 +1028,10 @@ const resetSearch = () => {
     loadCompletedOrders()
   }
 
-  ElMessage.success('搜索条件已重置')
+  ElMessage.success({
+    message: '搜索条件已重置',
+    duration: 1000
+  })
 }
 
 </script>
@@ -1311,6 +1445,27 @@ h1 {
   margin: 5px 0 0;
   font-size: 14px;
   text-align: center;
+}
+
+.order-countdown {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: bold;
+  margin-left: 10px;
+  text-align: center;
+}
+
+.countdown-text {
+  font-size: 14px;
+}
+
+.countdown-timer {
+  font-size: 16px;
+  color: #dc3545;
+  margin-left: 5px;
+  font-weight: bold;
 }
 
 .order-status {
