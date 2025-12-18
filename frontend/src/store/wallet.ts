@@ -22,7 +22,7 @@ export const useWalletStore = defineStore('wallet', {
       this.error = null
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/wallet/${userStore.user?.id}`)
+        const response = await axios.get(`/wallet/${userStore.user?.id}`)
         this.balance = response.data.balance
         userStore.updateUserBalance(response.data.balance)
       } catch (error: any) {
@@ -41,7 +41,7 @@ export const useWalletStore = defineStore('wallet', {
       this.error = null
 
       try {
-        const response = await axios.post('http://localhost:8080/api/wallet/deposit', {
+        const response = await axios.post('/wallet/deposit', {
           userId: userStore.user?.id,
           amount
         })
@@ -68,7 +68,7 @@ export const useWalletStore = defineStore('wallet', {
       this.error = null
 
       try {
-        const response = await axios.post('http://localhost:8080/api/wallet/withdraw', {
+        const response = await axios.post('/wallet/withdraw', {
           userId: userStore.user?.id,
           amount
         })
@@ -95,7 +95,7 @@ export const useWalletStore = defineStore('wallet', {
       this.error = null
 
       try {
-        const response = await axios.post('http://localhost:8080/api/wallet/pay', {
+        const response = await axios.post('/wallet/pay', {
           userId: userStore.user?.id,
           orderId
         })
@@ -121,7 +121,7 @@ export const useWalletStore = defineStore('wallet', {
       this.error = null
 
       try {
-        const response = await axios.post('http://localhost:8080/api/wallet/refund', {
+        const response = await axios.post('/wallet/refund', {
           orderId
         })
 
@@ -148,7 +148,7 @@ export const useWalletStore = defineStore('wallet', {
       this.error = null
 
       try {
-        const response = await axios.post('http://localhost:8080/api/wallet/batch-pay', {
+        const response = await axios.post('/wallet/batch-pay', {
           userId: userStore.user?.id,
           orderIds
         })

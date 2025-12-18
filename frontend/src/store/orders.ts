@@ -17,7 +17,7 @@ export const useOrdersStore = defineStore('orders', {
       if (!userStore.isLoggedIn || !userStore.user) return
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/orders/user/${userStore.user.id}`)
+        const response = await axios.get(`/orders/user/${userStore.user.id}`)
         
         if (response.data && Array.isArray(response.data)) {
           // 计算待支付订单数量

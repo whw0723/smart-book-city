@@ -54,7 +54,7 @@ export const useBookStore = defineStore('books', {
       try {
         // 尝试从后端API获取数据
         console.log('正在从API获取数据...')
-        const response = await axios.get('http://localhost:8080/api/books', { timeout: 5000 })
+        const response = await axios.get('/books', { timeout: 5000 })
         console.log('后端API返回数据:', response.data)
 
         // 处理新的ApiResponse格式
@@ -83,7 +83,7 @@ export const useBookStore = defineStore('books', {
       console.log(`开始获取第${page}页图书，每页${size}本`)
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/books/paged?page=${page}&size=${size}`, { timeout: 5000 })
+        const response = await axios.get(`/books/paged?page=${page}&size=${size}`, { timeout: 5000 })
         console.log('后端API返回分页数据:', response.data)
 
         // 处理新的ApiResponse格式
@@ -114,7 +114,7 @@ export const useBookStore = defineStore('books', {
       this.error = null
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/books/${id}`, { timeout: 5000 })
+        const response = await axios.get(`/books/${id}`, { timeout: 5000 })
         // 处理新的ApiResponse格式
         if (response.data && response.data.success && response.data.data) {
           this.currentBook = response.data.data
@@ -136,7 +136,7 @@ export const useBookStore = defineStore('books', {
       this.error = null
 
       try {
-        let url = 'http://localhost:8080/api/books/search?'
+        let url = '/books/search?'
 
         if (title) {
           url += `title=${encodeURIComponent(title)}`
@@ -169,7 +169,7 @@ export const useBookStore = defineStore('books', {
       this.error = null
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/books/category/${category}`, { timeout: 5000 })
+        const response = await axios.get(`/books/category/${category}`, { timeout: 5000 })
         // 处理新的ApiResponse格式
         if (response.data && response.data.success && Array.isArray(response.data.data)) {
           this.books = response.data.data
@@ -192,7 +192,7 @@ export const useBookStore = defineStore('books', {
       console.log(`开始获取${category}分类第${page}页图书，每页${size}本`)
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/books/category/${category}/paged?page=${page}&size=${size}`, { timeout: 5000 })
+        const response = await axios.get(`/books/category/${category}/paged?page=${page}&size=${size}`, { timeout: 5000 })
         console.log('后端API返回分类分页数据:', response.data)
 
         // 处理新的ApiResponse格式
@@ -229,7 +229,7 @@ export const useBookStore = defineStore('books', {
       this.error = null
       console.log('开始获取所有分类');
       try {
-        const response = await axios.get('http://localhost:8080/api/books/categories', { timeout: 3000 });
+        const response = await axios.get('/books/categories', { timeout: 3000 });
         // 处理新的ApiResponse格式（如果接口已更新）
         const categoriesData = response.data.success ? response.data.data : response.data;
         if (categoriesData && Array.isArray(categoriesData)) {

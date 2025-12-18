@@ -48,7 +48,7 @@ export const useCartStore = defineStore('cart', {
       this.error = null
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/cart/user/${userStore.user?.id}`)
+        const response = await axios.get(`/cart/user/${userStore.user?.id}`)
         this.items = response.data
         this.saveToLocalStorage() // 同步到本地存储
       } catch (error: any) {
@@ -79,7 +79,7 @@ export const useCartStore = defineStore('cart', {
       // 如果用户已登录，同步到后端
       if (userStore.isLoggedIn) {
         try {
-          await axios.post('http://localhost:8080/api/cart/add', {
+          await axios.post('/cart/add', {
             userId: userStore.user?.id,
             bookId: book.id,
             quantity: quantity
@@ -105,7 +105,7 @@ export const useCartStore = defineStore('cart', {
       // 如果用户已登录，同步到后端
       if (userStore.isLoggedIn) {
         try {
-          await axios.delete(`http://localhost:8080/api/cart/user/${userStore.user?.id}/book/${bookId}`)
+          await axios.delete(`/cart/user/${userStore.user?.id}/book/${bookId}`)
         } catch (error: any) {
           console.error('从购物车移除失败:', error)
           this.error = error.response?.data?.message || '从购物车移除失败'
@@ -127,7 +127,7 @@ export const useCartStore = defineStore('cart', {
       // 如果用户已登录，同步到后端
       if (userStore.isLoggedIn) {
         try {
-          await axios.put(`http://localhost:8080/api/cart/user/${userStore.user?.id}/book/${bookId}`, {
+          await axios.put(`/cart/user/${userStore.user?.id}/book/${bookId}`, {
             quantity: quantity
           })
         } catch (error: any) {
@@ -148,7 +148,7 @@ export const useCartStore = defineStore('cart', {
       // 如果用户已登录，同步到后端
       if (userStore.isLoggedIn) {
         try {
-          await axios.delete(`http://localhost:8080/api/cart/user/${userStore.user?.id}/clear`)
+          await axios.delete(`/cart/user/${userStore.user?.id}/clear`)
         } catch (error: any) {
           console.error('清空购物车失败:', error)
           this.error = error.response?.data?.message || '清空购物车失败'
@@ -163,11 +163,11 @@ export const useCartStore = defineStore('cart', {
 
       try {
         // 先清空服务器上的购物车
-        await axios.delete(`http://localhost:8080/api/cart/user/${userStore.user?.id}/clear`)
+        await axios.delete(`/cart/user/${userStore.user?.id}/clear`)
 
         // 然后添加本地购物车中的所有商品
         for (const item of this.items) {
-          await axios.post('http://localhost:8080/api/cart/add', {
+          await axios.post('/cart/add', {
             userId: userStore.user?.id,
             bookId: item.book.id,
             quantity: item.quantity

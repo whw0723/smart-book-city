@@ -3,7 +3,21 @@ import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
   base: '/smart-book-city/', // GitHub Pages需要的base路径
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    {
+      name: 'replace-localhost-urls',
+      transform(code, id) {
+        // 只处理JavaScript和TypeScript文件
+        if (id.endsWith('.js') || id.endsWith('.ts') || id.endsWith('.vue')) {
+          return {
+            code: code.replace(/http:\/\/localhost:8080\/api/g, 'https://smart-book-city.onrender.com/api'),
+            map: null
+          }
+        }
+      }
+    }
+  ],
   resolve: {
     alias: {
       '@': '/src'

@@ -34,8 +34,8 @@ export const useUserStore = defineStore('user', {
       try {
         // 根据登录类型选择不同的API端点
         const endpoint = loginType === 'admin'
-          ? 'http://localhost:8080/api/admin/login'
-          : 'http://localhost:8080/api/users/login';
+          ? '/admin/login'
+          : '/users/login';
 
         const response = await axios.post(endpoint, {
           username,
@@ -101,7 +101,7 @@ export const useUserStore = defineStore('user', {
 
     async register(username: string, password: string, email: string) {
       try {
-        const response = await axios.post('http://localhost:8080/api/users/register', {
+        const response = await axios.post('/users/register', {
           username,
           password,
           email,

@@ -1,14 +1,21 @@
 import axios from 'axios'
 import { useUserStore } from '../store/user'
+import { API_BASE_URL } from './apiUrl'
 
 // 创建axios实例
 const instance = axios.create({
-  baseURL: 'https://smart-book-city.onrender.com/api',
+  baseURL: API_BASE_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
   }
 })
+
+// 导出实例，方便其他文件使用
+export default instance
+
+// 同时替换全局axios实例的baseURL，确保所有直接使用axios的地方也能生效
+axios.defaults.baseURL = API_BASE_URL
 
 // 请求拦截器
 instance.interceptors.request.use(
