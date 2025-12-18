@@ -2,7 +2,7 @@ package com.bookstore.service;
 
 import com.bookstore.entity.User;
 import com.bookstore.mapper.UserMapper;
-import com.bookstore.utils.JwtUtils;
+import com.bookstore.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

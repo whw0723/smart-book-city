@@ -1,4 +1,4 @@
-package com.bookstore.utils;
+package com.bookstore.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
