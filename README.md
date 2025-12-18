@@ -128,8 +128,8 @@ SOURCE init.sql;
 ```properties
 # 数据库连接配置
 spring.datasource.url=jdbc:mysql://localhost:3306/bookstore?useSSL=false&serverTimezone=UTC
-spring.datasource.username=root
-spring.datasource.password=your_password
+spring.datasource.username=你的数据库用户名
+spring.datasource.password=你的数据库密码
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 ```
 
