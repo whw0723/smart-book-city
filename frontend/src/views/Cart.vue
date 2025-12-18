@@ -81,7 +81,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
-import axios from 'axios'
+import axios from '../utils/axios'
 import { useCartStore } from '../store/cart'
 import { useUserStore } from '../store/user'
 

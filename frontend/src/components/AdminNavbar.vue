@@ -49,7 +49,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '../store/user'
 import type { FormInstance, FormRules } from 'element-plus'
-import axios from 'axios'
+import axios from '../utils/axios'
 
 const router = useRouter()
 const userStore = useUserStore()

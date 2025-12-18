@@ -165,7 +165,7 @@ import { useUserStore } from '../store/user'
 import { useWalletStore } from '../store/wallet'
 import { useRouter, useRoute } from 'vue-router'
 import type { FormInstance, FormRules } from 'element-plus'
-import axios from 'axios'
+import axios from '../utils/axios'
 import ReadingStats from '../components/ReadingStats.vue'
 
 const userStore = useUserStore()

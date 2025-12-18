@@ -293,7 +293,7 @@ import { ElMessage, ElMessageBox, ElDatePicker, ElInput } from 'element-plus'
 import { useUserStore } from '../store/user'
 import { useWalletStore } from '../store/wallet'
 import { useOrdersStore } from '../store/orders'
-import axios from 'axios'
+import axios from '../utils/axios'
 
 // 定义 Order 和 OrderItem 接口
 interface OrderItem {

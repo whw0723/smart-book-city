@@ -80,7 +80,7 @@
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../store/user'
-import axios from 'axios'
+import axios from '../utils/axios'
 import * as echarts from 'echarts'
 
 const router = useRouter()

@@ -55,7 +55,7 @@ import { useBookStore, type Book } from '../store/books'
 import { useUserStore } from '../store/user'
 import { useCartStore } from '../store/cart'
 import { useOrdersStore } from '../store/orders'
-import axios from 'axios'
+import axios from '../utils/axios'
 
 // 图书分类映射 - 将所有分类归并到7个主分类
 const categoryMap: Record<string, string> = {

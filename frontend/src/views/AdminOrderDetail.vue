@@ -86,7 +86,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import axios from 'axios'
+import axios from '../utils/axios'
 import { useUserStore } from '../store/user'
 import AdminNavbar from '../components/AdminNavbar.vue'
 

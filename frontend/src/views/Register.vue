@@ -77,7 +77,7 @@ import { ElMessage } from 'element-plus'
 import { useUserStore } from '../store/user'
 import type { FormInstance, FormRules } from 'element-plus'
 import { Loading } from '@element-plus/icons-vue'
-import axios from 'axios'
+import axios from '../utils/axios'
 
 const userStore = useUserStore()
 const router = useRouter()

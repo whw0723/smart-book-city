@@ -11,9 +11,6 @@ const instance = axios.create({
   }
 })
 
-// 导出实例，方便其他文件使用
-export default instance
-
 // 同时替换全局axios实例的baseURL，确保所有直接使用axios的地方也能生效
 axios.defaults.baseURL = API_BASE_URL
 
@@ -60,4 +57,5 @@ instance.interceptors.response.use(
   }
 )
 
+// 导出实例，方便其他文件使用
 export default instance

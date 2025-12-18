@@ -504,7 +504,7 @@ import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
 import { List, Reading, User, DataAnalysis } from '@element-plus/icons-vue'
 import { useUserStore } from '../store/user'
 import AdminNavbar from '../components/AdminNavbar.vue'
-import axios from 'axios'
+import axios from '../utils/axios'
 
 interface Book {
   id: number;

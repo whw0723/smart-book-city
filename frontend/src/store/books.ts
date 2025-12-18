@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import axios from '../utils/axios'
 
 // 导出 Book 接口
 export interface Book {
