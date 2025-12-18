@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
+  base: '/smart-book-city/', // GitHub Pages需要的base路径
   plugins: [vue()],
   resolve: {
     alias: {
