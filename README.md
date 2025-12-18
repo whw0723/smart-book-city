@@ -77,6 +77,8 @@ smart-book-city/
 
 #### 1. 数据库初始化
 
+##### 方式一：使用命令行
+
 ```bash
 # 登录MySQL
 mysql -u root -p
@@ -90,6 +92,34 @@ USE bookstore;
 # 执行初始化脚本
 SOURCE init.sql;
 ```
+
+##### 方式二：使用图形化工具
+
+1. **Navicat Premium**：
+   - 打开Navicat Premium，连接到MySQL服务器
+   - 右键点击"数据库"，选择"新建数据库"
+   - 数据库名填写为 `bookstore`，字符集选择 `utf8mb4`，排序规则选择 `utf8mb4_unicode_ci`
+   - 点击"确定"创建数据库
+   - 双击打开刚创建的 `bookstore` 数据库
+   - 点击"导入向导"按钮，选择 `init.sql` 文件
+   - 按照向导提示完成导入
+
+2. **MySQL Workbench**：
+   - 打开MySQL Workbench，连接到MySQL服务器
+   - 在左侧导航栏中点击"Schemas"
+   - 右键点击空白处，选择"Create Schema..."
+   - Schema Name填写为 `bookstore`，字符集选择 `utf8mb4`，排序规则选择 `utf8mb4_unicode_ci`
+   - 点击"Apply"创建数据库
+   - 双击打开刚创建的 `bookstore` 数据库
+   - 点击顶部菜单栏的"File -> Run SQL Script..."
+   - 选择 `init.sql` 文件，点击"Run"执行脚本
+
+3. **其他图形化工具**：
+   - 连接到MySQL服务器
+   - 创建名为 `bookstore` 的数据库
+   - 执行 `init.sql` 文件中的SQL语句
+
+数据库初始化完成后，将包含所有必要的数据表结构。
 
 #### 2. 后端配置
 
@@ -105,15 +135,34 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 #### 3. 启动后端服务
 
+##### 方式一：使用Maven命令
+
 ```bash
 cd backend
 # 编译并运行
 mvn spring-boot:run
 ```
 
+##### 方式二：使用IDE启动
+
+1. **IntelliJ IDEA**：
+   - 打开IntelliJ IDEA，选择 `File -> Open`，导入 `backend` 目录
+   - 等待Maven依赖下载完成
+   - 在项目结构中找到 `src/main/java/com/bookstore/BookstoreApplication.java`
+   - 右键点击该文件，选择 `Run 'BookstoreApplication'`
+
+2. **Eclipse**：
+   - 打开Eclipse，选择 `File -> Import -> Maven -> Existing Maven Projects`
+   - 选择 `backend` 目录作为根目录
+   - 等待Maven依赖下载完成
+   - 在项目结构中找到 `BookstoreApplication.java`
+   - 右键点击该文件，选择 `Run As -> Java Application`
+
 后端服务将在 `http://localhost:8080` 启动。
 
 #### 4. 启动前端服务
+
+##### 方式一：使用命令行
 
 ```bash
 cd frontend
@@ -122,6 +171,21 @@ npm install
 # 启动开发服务器
 npm run dev
 ```
+
+##### 方式二：使用IDE启动
+
+1. **VS Code**：
+   - 打开VS Code，选择 `File -> Open Folder`，导入 `frontend` 目录
+   - 等待VS Code自动检测项目类型并安装必要的扩展
+   - 打开终端（`Ctrl+`），执行 `npm install` 安装依赖
+   - 依赖安装完成后，执行 `npm run dev` 启动开发服务器
+
+2. **IntelliJ IDEA/WebStorm**：
+   - 打开IDE，选择 `File -> Open`，导入 `frontend` 目录
+   - 等待IDE自动检测项目类型
+   - 打开终端，执行 `npm install` 安装依赖
+   - 在 `package.json` 文件中，找到 `scripts` 部分的 `dev` 脚本
+   - 右键点击 `dev` 脚本，选择 `Run 'npm run dev'`
 
 前端服务将在 `http://localhost:3000` 启动。
 
