@@ -11,10 +11,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000") // Vue开发服务器地址
+                .allowedOrigins("*") // 允许所有域名访问，解决GitHub Pages跨域问题
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(true)
+                .allowCredentials(false) // 允许所有域名时，allowCredentials必须为false
                 .maxAge(3600);
     }
 }
