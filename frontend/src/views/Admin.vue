@@ -193,7 +193,11 @@
               }"
               class="larger-font-table"
             >
-              <el-table-column prop="id" label="ID" width="80" align="center" />
+              <el-table-column label="ID" width="80" align="center">
+                <template #default="scope">
+                  {{ (userCurrentPage - 1) * pageSize + scope.$index + 1 }}
+                </template>
+              </el-table-column>
               <el-table-column prop="username" label="用户名" width="150" align="center" />
               <el-table-column prop="email" label="邮箱" align="center" />
               <el-table-column label="订单数" width="120" align="center">

@@ -101,8 +101,17 @@ public class UserService {
             user.setBalance(new BigDecimal("0.00"));
         }
 
-        userMapper.save(user);
-        return user;
+        try {
+            userMapper.save(user);
+            return user;
+        } catch (Exception e) {
+            // 处理数据库唯一约束异常
+            if (e.getMessage() != null && e.getMessage().contains("Duplicate entry") && e.getMessage().contains("username")) {
+                throw new IllegalArgumentException("用户名已存在");
+            }
+            // 其他异常向上抛出
+            throw e;
+        }
     }
 
     /**

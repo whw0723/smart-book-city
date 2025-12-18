@@ -7,7 +7,7 @@
         </div>
       </template>
 
-      <el-form :model="registerForm" :rules="rules" ref="registerFormRef" label-position="left" label-width="80px">
+      <el-form :model="registerForm" :rules="rules" ref="registerFormRef" label-position="left" label-width="80px" @submit.prevent="submitForm">
         <el-form-item label="用户名" prop="username">
           <el-input
             v-model="registerForm.username"
@@ -53,7 +53,7 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="submitForm" :loading="loading" style="width: 150px; margin-left: 80px;">
+          <el-button type="primary" :loading="loading" style="width: 150px; margin-left: 80px;" native-type="submit">
             注册
           </el-button>
         </el-form-item>

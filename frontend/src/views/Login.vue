@@ -17,7 +17,7 @@
           </div>
         </template>
 
-      <el-form :model="loginForm" :rules="rules" ref="loginFormRef" label-position="left" label-width="70px">
+      <el-form :model="loginForm" :rules="rules" ref="loginFormRef" label-position="left" label-width="70px" @submit.prevent="submitForm">
         <el-form-item label="用户名" prop="username">
           <el-input
             v-model="loginForm.username"
@@ -39,7 +39,7 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="submitForm" :loading="loading" style="width: 150px; margin-left: 70px;">
+          <el-button type="primary" :loading="loading" style="width: 150px; margin-left: 70px;" native-type="submit">
             登录
           </el-button>
         </el-form-item>
@@ -148,25 +148,24 @@ const submitForm = async () => {
 
           // 如果是普通用户，同步购物车数据
           if (loginType.value === 'user' && !userStore.isAdmin) {
-            // 先从本地加载购物车数据
-            cartStore.loadFromLocalStorage()
-
-            // 然后同步到服务器
-            if (cartStore.items.length > 0) {
-              try {
-                await cartStore.syncCartToServer()
-                console.log('购物车数据已同步到服务器')
-              } catch (error) {
-                console.error('同步购物车数据失败:', error)
+            try {
+              // 优先从服务器加载当前用户的购物车数据
+              await cartStore.fetchCart()
+              console.log('已从服务器加载购物车数据')
+              
+              // 如果服务器返回的数据为空，且本地有数据，询问用户是否要同步
+              if (cartStore.items.length === 0) {
+                cartStore.loadFromLocalStorage()
+                if (cartStore.items.length > 0) {
+                  // 直接将本地购物车数据同步到当前账户
+                  await cartStore.syncCartToServer()
+                  console.log('已将本地购物车数据同步到服务器')
+                }
               }
-            } else {
-              // 如果本地购物车为空，从服务器加载
-              try {
-                await cartStore.fetchCart()
-                console.log('已从服务器加载购物车数据')
-              } catch (error) {
-                console.error('从服务器加载购物车数据失败:', error)
-              }
+            } catch (error) {
+              console.error('处理购物车数据失败:', error)
+              // 出错时从本地加载
+              cartStore.loadFromLocalStorage()
             }
           }
 

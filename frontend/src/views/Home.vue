@@ -127,7 +127,6 @@ import { useUserStore } from '../store/user'
 import { useCartStore } from '../store/cart'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import axios from 'axios'
-import { defineOptions } from 'vue' // 确保 defineOptions 被导入（如果之前被移除）
 
 // 图书分类映射 - 将所有分类归并到10个以内
 const categoryMap: Record<string, string> = {
