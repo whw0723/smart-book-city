@@ -2,6 +2,7 @@ package com.bookstore.service;
 
 import com.bookstore.entity.User;
 import com.bookstore.mapper.UserMapper;
+import com.bookstore.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -240,8 +241,10 @@ public class UserService {
      * 用户登录
      */
     @Transactional
-    public User login(User loginUser) {
+    public Map<String, Object> login(User loginUser) {
         User user = getUserByUsername(loginUser.getUsername());
+        Map<String, Object> response = new HashMap<>();
+        
         if (user != null) {
             // 首先尝试使用密码编码器验证（用于加密后的密码）
             boolean passwordMatches = passwordEncoder.matches(loginUser.getPassword(), user.getPassword());
@@ -257,9 +260,23 @@ public class UserService {
             if (passwordMatches) {
                 // 不返回密码
                 user.setPassword(null);
-                return user;
+                
+                // 创建JWT工具类实例
+                JwtUtils jwtUtils = new JwtUtils();
+                // 生成token
+                String token = jwtUtils.generateToken(user.getUsername());
+                
+                // 构建响应
+                response.put("success", true);
+                response.put("user", user);
+                response.put("token", token);
+                return response;
             }
         }
+        
+        // 登录失败
+        response.put("success", false);
+        response.put("message", "用户名或密码错误");
         throw new IllegalArgumentException("用户名或密码错误");
     }
     

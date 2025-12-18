@@ -10,11 +10,24 @@ interface User {
 }
 
 export const useUserStore = defineStore('user', {
-  state: () => ({
-    user: null as User | null,
-    isLoggedIn: false,
-    isAdmin: false
-  }),
+  state: () => {
+    // 从sessionStorage获取tabId，如果不存在则生成新的
+    // 使用sessionStorage是因为它是每个标签页独立的，不会在标签页之间共享
+    let tabId = sessionStorage.getItem('tabId');
+    if (!tabId) {
+      tabId = `tab_${Math.random().toString(36).substr(2, 9)}_${Date.now()}`;
+      sessionStorage.setItem('tabId', tabId);
+    }
+    
+    return {
+      user: null as User | null,
+      isLoggedIn: false,
+      isAdmin: false,
+      token: null as string | null,
+      userType: null as string | null,
+      tabId: tabId // 标签页唯一标识符
+    };
+  },
 
   actions: {
     async login(username: string, password: string, loginType: string = 'user') {
@@ -36,8 +49,10 @@ export const useUserStore = defineStore('user', {
             this.user = response.data.admin;
             this.isLoggedIn = true;
             this.isAdmin = true;
-            localStorage.setItem('user', JSON.stringify(response.data.admin));
-            localStorage.setItem('userType', loginType);
+            this.userType = loginType;
+            // 使用标签页唯一标识符作为localStorage的键
+            localStorage.setItem(`user_${this.tabId}`, JSON.stringify(response.data.admin));
+            localStorage.setItem(`userType_${this.tabId}`, loginType);
             return { success: true };
           } else {
             return {
@@ -46,13 +61,27 @@ export const useUserStore = defineStore('user', {
             };
           }
         } else {
-          // 普通用户登录返回格式：直接返回用户对象
-          if (response.data && (response.data.id || response.data.username)) {
+          // 普通用户登录返回格式：{success: boolean, user: object, token: string}
+          if (response.data && response.data.success && response.data.user) {
+            this.user = response.data.user;
+            this.isLoggedIn = true;
+            this.isAdmin = false;
+            this.token = response.data.token;
+            this.userType = loginType;
+            // 使用标签页唯一标识符作为localStorage的键
+            localStorage.setItem(`user_${this.tabId}`, JSON.stringify(response.data.user));
+            localStorage.setItem(`token_${this.tabId}`, response.data.token);
+            localStorage.setItem(`userType_${this.tabId}`, loginType);
+            return { success: true };
+          } else if (response.data && (response.data.id || response.data.username)) {
+            // 兼容旧格式：直接返回用户对象
             this.user = response.data;
             this.isLoggedIn = true;
             this.isAdmin = false;
-            localStorage.setItem('user', JSON.stringify(response.data));
-            localStorage.setItem('userType', loginType);
+            this.userType = loginType;
+            // 使用标签页唯一标识符作为localStorage的键
+            localStorage.setItem(`user_${this.tabId}`, JSON.stringify(response.data));
+            localStorage.setItem(`userType_${this.tabId}`, loginType);
             return { success: true };
           } else {
             return {
@@ -99,17 +128,25 @@ export const useUserStore = defineStore('user', {
       this.user = null
       this.isLoggedIn = false
       this.isAdmin = false
-      localStorage.removeItem('user')
-      localStorage.removeItem('userType')
+      this.token = null
+      this.userType = null
+      // 使用标签页唯一标识符作为localStorage的键
+      localStorage.removeItem(`user_${this.tabId}`)
+      localStorage.removeItem(`token_${this.tabId}`)
+      localStorage.removeItem(`userType_${this.tabId}`)
     },
 
     initializeFromLocalStorage() {
-      const userStr = localStorage.getItem('user')
-      const userType = localStorage.getItem('userType')
+      // 使用标签页唯一标识符作为localStorage的键
+      const userStr = localStorage.getItem(`user_${this.tabId}`)
+      const token = localStorage.getItem(`token_${this.tabId}`)
+      const userType = localStorage.getItem(`userType_${this.tabId}`)
 
-      if (userStr) {
+      if (userStr && userType) {
         this.user = JSON.parse(userStr)
         this.isLoggedIn = true
+        this.token = token || null
+        this.userType = userType
         // 如果用户类型是管理员，直接设置为管理员
         this.isAdmin = userType === 'admin'
       }
@@ -119,7 +156,8 @@ export const useUserStore = defineStore('user', {
     updateUserBalance(balance: number) {
       if (this.user) {
         this.user.balance = balance
-        localStorage.setItem('user', JSON.stringify(this.user))
+        // 使用标签页唯一标识符作为localStorage的键
+        localStorage.setItem(`user_${this.tabId}`, JSON.stringify(this.user))
       }
     }
   }

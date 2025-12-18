@@ -80,8 +80,16 @@ const router = createRouter({
 
 // 导航守卫
 router.beforeEach((to, from, next) => {
-  const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') : null
-  const userType = localStorage.getItem('userType')
+  // 从sessionStorage获取当前标签页的tabId
+  const tabId = sessionStorage.getItem('tabId');
+  
+  // 使用标签页唯一标识符获取用户信息和用户类型
+  const userKey = tabId ? `user_${tabId}` : 'user';
+  const userTypeKey = tabId ? `userType_${tabId}` : 'userType';
+  
+  const userStr = localStorage.getItem(userKey);
+  const user = userStr ? JSON.parse(userStr) : null;
+  const userType = localStorage.getItem(userTypeKey);
 
   // 检查是否需要管理员权限
   if (to.meta.requiresAdmin) {
