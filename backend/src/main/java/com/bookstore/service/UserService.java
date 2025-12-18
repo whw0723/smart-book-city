@@ -24,6 +24,9 @@ public class UserService {
     
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private JwtUtils jwtUtils;
 
     /**
      * 获取所有用户
@@ -270,9 +273,7 @@ public class UserService {
                 // 不返回密码
                 user.setPassword(null);
                 
-                // 创建JWT工具类实例
-                JwtUtils jwtUtils = new JwtUtils();
-                // 生成token
+                // 使用注入的JWT工具类生成token
                 String token = jwtUtils.generateToken(user.getUsername());
                 
                 // 构建响应
