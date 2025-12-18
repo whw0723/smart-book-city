@@ -14,6 +14,7 @@
             placeholder="请输入用户名"
             clearable
             style="width: 220px;"
+            ref="usernameInputRef"
           >
             <template #suffix>
               <el-icon v-if="checkingUsername" class="is-loading"><Loading /></el-icon>
@@ -70,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '../store/user'
@@ -84,6 +85,7 @@ const router = useRouter()
 const registerFormRef = ref<FormInstance>()
 const loading = ref(false)
 const checkingUsername = ref(false)
+const usernameInputRef = ref<HTMLElement | null>(null)
 
 const registerForm = reactive({
   username: '',
@@ -150,6 +152,18 @@ const rules = reactive<FormRules>({
     { required: true, message: '请输入邮箱地址', trigger: 'blur' },
     { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
   ]
+})
+
+// 在组件挂载时，将焦点设置到用户名输入框
+onMounted(async () => {
+  // 确保DOM已渲染完成
+  await nextTick()
+  
+  // 将焦点设置到用户名输入框
+  if (usernameInputRef.value) {
+    // 使用Element Plus的focus方法
+    (usernameInputRef.value as any).focus()
+  }
 })
 
 const submitForm = async () => {

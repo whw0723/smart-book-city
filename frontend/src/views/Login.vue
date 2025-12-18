@@ -24,6 +24,7 @@
             placeholder="请输入用户名"
             clearable
             style="width: 220px;"
+            ref="usernameInputRef"
           ></el-input>
         </el-form-item>
 
@@ -58,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, watch, onMounted } from 'vue'
+import { reactive, ref, watch, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '../store/user'
@@ -74,6 +75,7 @@ const loginFormRef = ref<FormInstance>()
 const loginContainerRef = ref<HTMLElement | null>(null)
 const loading = ref(false)
 const loginType = ref('user') // 默认用户登录
+const usernameInputRef = ref<HTMLElement | null>(null)
 
 const loginForm = reactive({
   username: '',
@@ -81,7 +83,7 @@ const loginForm = reactive({
 })
 
 // 在组件挂载时，从localStorage加载上次登录的用户名
-onMounted(() => {
+onMounted(async () => {
   // 移除粒子动画初始化
 
   // 加载上次登录的用户名
@@ -93,6 +95,15 @@ onMounted(() => {
     loginForm.username = savedUserUsername
   } else if (loginType.value === 'admin' && savedAdminUsername) {
     loginForm.username = savedAdminUsername
+  }
+
+  // 确保DOM已渲染完成
+  await nextTick()
+  
+  // 将焦点设置到用户名输入框
+  if (usernameInputRef.value) {
+    // 使用Element Plus的focus方法
+    (usernameInputRef.value as any).focus()
   }
 })
 
