@@ -448,6 +448,8 @@ onUnmounted(() => {
 <style scoped>
 .reading-stats {
   padding: 10px 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 .stat-cards {
@@ -496,6 +498,7 @@ onUnmounted(() => {
   min-height: 300px;
   margin: 10px 0;
   width: 100%;
+  max-width: 100%;
   position: relative;
   overflow: visible;
 }

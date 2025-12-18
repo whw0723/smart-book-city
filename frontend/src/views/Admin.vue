@@ -420,6 +420,80 @@
         </span>
       </template>
     </el-dialog>
+
+    <!-- 订单详情弹窗 -->
+    <el-dialog
+      v-model="orderDetailDialogVisible"
+      title="订单详情"
+      width="700px"
+      center
+      :close-on-click-modal="false"
+    >
+      <div v-if="orderDetailLoading" class="loading-detail">
+        <p>加载中...</p>
+      </div>
+      <div v-else-if="currentOrderDetail" class="admin-order-detail-content">
+        <div class="detail-header">
+          <div class="detail-row">
+            <span class="detail-label">订单号:</span>
+            <span class="detail-value">{{ currentOrderDetail.orderNumber }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">用户:</span>
+            <span class="detail-value">{{ currentOrderDetail.user?.username || '未知用户' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">下单时间:</span>
+            <span class="detail-value">{{ formatDate(currentOrderDetail.orderDate) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">订单状态:</span>
+            <el-tag :type="getStatusType(currentOrderDetail.status)">
+              {{ getStatusText(currentOrderDetail.status) }}
+            </el-tag>
+          </div>
+        </div>
+
+        <div class="detail-body">
+          <table class="admin-order-items-table">
+            <thead>
+              <tr>
+                <th>书名</th>
+                <th>作者</th>
+                <th>单价</th>
+                <th>数量</th>
+                <th>小计</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in currentOrderDetail.orderItems || currentOrderDetail.items" :key="item.id">
+                <td>{{ getItemTitle(item) }}</td>
+                <td>{{ getItemAuthor(item) }}</td>
+                <td>¥{{ getItemPrice(item).toFixed(2) }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>¥{{ (getItemPrice(item) * item.quantity).toFixed(2) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="detail-footer">
+          <div class="total-amount">
+            订单总额: <span class="amount-value">¥{{ currentOrderDetail.totalAmount.toFixed(2) }}</span>
+          </div>
+        </div>
+      </div>
+      <div v-else>
+        <el-empty description="获取订单详情失败">
+          <el-button type="primary" @click="goToOrderDetail(currentOrderId)">重试</el-button>
+        </el-empty>
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="orderDetailDialogVisible = false">关闭</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -450,12 +524,30 @@ interface UserType {
   balance?: number;
 }
 
+// 定义OrderItem接口
+interface OrderItem {
+  id: number;
+  bookId: number;
+  bookTitle: string;
+  bookAuthor: string;
+  price: number;
+  quantity: number;
+  book?: {
+    id: number;
+    title: string;
+    author: string;
+    price: number;
+  };
+}
+
 interface Order {
   id: number;
   orderNumber: string;
   orderDate: string;
   status: number;
   totalAmount: number;
+  orderItems?: OrderItem[];
+  items?: OrderItem[];
   user?: {
     id: number;
     username: string;
@@ -488,10 +580,16 @@ const orderCurrentPage = ref(1)
 const pageSize = ref(10) // 每页显示10条数据
 const userTotal = ref(0) // 用户总数
 const orderTotal = ref(0) // 订单总数
+const orders = ref<Order[]>([])
+
+// 订单详情弹窗相关
+const orderDetailDialogVisible = ref(false)
+const orderDetailLoading = ref(false)
+const currentOrderDetail = ref<Order | null>(null)
+const currentOrderId = ref(0)
 
 const books = ref<Book[]>([])
 const users = ref<UserType[]>([])
-const orders = ref<Order[]>([])
 const userOrderCounts = ref<Record<number, number>>({})
 
 // 图书选择相关
@@ -909,6 +1007,19 @@ const getStatusType = (status: number): string => {
   return typeMap[status] || ''
 }
 
+// 辅助方法，处理订单项数据
+const getItemTitle = (item: any): string => {
+  return item.bookTitle || (item.book?.title || '')
+}
+
+const getItemAuthor = (item: any): string => {
+  return item.bookAuthor || (item.book?.author || '')
+}
+
+const getItemPrice = (item: any): number => {
+  return item.price || (item.book?.price || 0)
+}
+
 // 图书管理相关变量
 const showDialog = ref(false)
 const dialogType = ref('add')
@@ -980,17 +1091,23 @@ const getCategoryName = (category: string | null | undefined): string => {
 
   // 清理分类字符串，去除多余的空格、换行符等
   const cleanCategory = category.trim().replace(/\s+/g, '')
+  const lowerCategory = cleanCategory.toLowerCase()
 
-  // 直接查找映射
-  if (categoryMap[cleanCategory.toLowerCase()]) {
-    return categoryMap[cleanCategory.toLowerCase()]
+  // 直接查找映射（支持中英文）
+  if (categoryMap[lowerCategory]) {
+    return categoryMap[lowerCategory]
   }
 
   // 如果没有直接匹配，尝试部分匹配
   for (const key in categoryMap) {
-    if (cleanCategory.toLowerCase().includes(key.toLowerCase())) {
+    if (lowerCategory.includes(key.toLowerCase())) {
       return categoryMap[key]
     }
+  }
+
+  // 如果是中文分类名称，直接返回（处理API返回中文分类的情况）
+  if (/[\u4e00-\u9fa5]/.test(cleanCategory)) {
+    return cleanCategory
   }
 
   return '未分类'
@@ -1126,14 +1243,30 @@ const getUserOrderCount = (userId: number): number => {
 
 // 订单管理相关函数
 
-// 导航到订单详情页面
-const goToOrderDetail = (orderId: number) => {
+// 打开订单详情弹窗
+const goToOrderDetail = async (orderId: number) => {
+  currentOrderId.value = orderId
+  orderDetailDialogVisible.value = true
+  orderDetailLoading.value = true
+  currentOrderDetail.value = null
+
   try {
-    console.log('导航到订单详情页面，订单ID:', orderId)
-    router.push(`/admin/order/${orderId}`)
+    // 从现有订单列表中查找订单
+    const existingOrder = orders.value.find((order: Order) => order.id === orderId)
+    if (existingOrder) {
+      currentOrderDetail.value = existingOrder
+    } else {
+      // 如果找不到，从API获取
+      const response = await axios.get(`http://localhost:8080/api/orders/${orderId}`)
+      if (response.data) {
+        currentOrderDetail.value = response.data as Order
+      }
+    }
   } catch (error) {
-    console.error('导航到订单详情页面失败:', error)
-    ElMessage.error('导航失败，请重试')
+    console.error('获取订单详情失败:', error)
+    ElMessage.error('获取订单详情失败')
+  } finally {
+    orderDetailLoading.value = false
   }
 }
 
@@ -1694,6 +1827,12 @@ const initCharts = async () => {
       categoryData.value = [{ name: '暂无数据', value: 0 }]
     }
 
+    // 将分类名称从英文转换为中文
+    const formattedCategoryData = categoryData.value.map(item => ({
+      name: getCategoryName(item.name),
+      value: item.value || 0
+    }))
+
     categoryChartInstance.setOption({
       tooltip: {
         trigger: 'item',
@@ -1703,7 +1842,7 @@ const initCharts = async () => {
         orient: 'vertical',
         right: 10,
         top: 'center',
-        data: categoryData.value.map(item => item.name || '未分类')
+        data: formattedCategoryData.map(item => item.name || '未分类')
       },
       series: [{
         name: '书籍数量',
@@ -1731,10 +1870,7 @@ const initCharts = async () => {
         labelLine: {
           show: true
         },
-        data: categoryData.value.map(item => ({
-          name: item.name || '未分类',
-          value: item.value || 0
-        }))
+        data: formattedCategoryData
       }]
     })
 
@@ -2115,6 +2251,89 @@ watch(salesPeriod, () => {
 /* 数据统计页面样式 */
 .stats-container {
   padding: 20px;
+}
+
+/* 订单详情弹窗样式 */
+.loading-detail {
+  text-align: center;
+  padding: 20px;
+}
+
+.admin-order-detail-content {
+  padding: 10px 0;
+}
+
+.detail-header {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+}
+
+.detail-row {
+  display: flex;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.detail-row:last-child {
+  margin-bottom: 0;
+}
+
+.detail-label {
+  width: 80px;
+  font-weight: bold;
+  color: #606266;
+}
+
+.detail-value {
+  color: #303133;
+}
+
+.admin-order-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+}
+
+.admin-order-items-table th,
+.admin-order-items-table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ebeef5;
+}
+
+.admin-order-items-table th {
+  background-color: #f5f7fa;
+  font-weight: bold;
+  color: #303133;
+}
+
+.admin-order-items-table td {
+  color: #606266;
+}
+
+.admin-order-items-table tr:last-child td {
+  border-bottom: none;
+}
+
+.detail-footer {
+  margin-top: 20px;
+  padding: 15px;
+  text-align: right;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+}
+
+.total-amount {
+  font-weight: bold;
+  color: #303133;
+  font-size: 16px;
+}
+
+.amount-value {
+  color: #f56c6c;
+  font-size: 18px;
 }
 
 

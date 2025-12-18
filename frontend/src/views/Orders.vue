@@ -221,6 +221,69 @@
       </div>
     </div>
   </div>
+
+  <!-- 订单详情弹窗 -->
+  <el-dialog
+    v-model="dialogVisible"
+    title="订单详情"
+    width="600px"
+    center
+    :close-on-click-modal="false"
+  >
+    <div v-if="loadingDetail" class="loading-detail">
+      <p>加载中...</p>
+    </div>
+    <div v-else-if="orderDetail" class="order-detail-content">
+      <div class="detail-header">
+        <div class="detail-row">
+          <span class="detail-label">订单号:</span>
+          <span class="detail-value">{{ orderDetail.orderNumber }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">下单时间:</span>
+          <span class="detail-value">{{ formatDate(orderDetail.orderDate) }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">订单状态:</span>
+          <span class="detail-value status-{{ orderDetail.status }}">{{ getStatusText(orderDetail.status) }}</span>
+        </div>
+      </div>
+
+      <div class="detail-body">
+        <table class="order-items-table">
+          <thead>
+            <tr>
+              <th>书名</th>
+              <th>作者</th>
+              <th>单价</th>
+              <th>数量</th>
+              <th>小计</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in orderDetail.orderItems || orderDetail.items" :key="item.id">
+              <td>{{ getItemTitle(item) }}</td>
+              <td>{{ getItemAuthor(item) }}</td>
+              <td>¥{{ getItemPrice(item).toFixed(2) }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>¥{{ (getItemPrice(item) * item.quantity).toFixed(2) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="detail-footer">
+        <div class="total-amount">
+          总计: <span class="amount-value">¥{{ orderDetail.totalAmount.toFixed(2) }}</span>
+        </div>
+      </div>
+    </div>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">关闭</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -294,6 +357,12 @@ const completedTotal = ref(0)
 // 倒计时相关
 const countdownTimer = ref<number | null>(null) // 倒计时定时器
 const PAYMENT_TIMEOUT = 5 * 60 // 支付超时时间（5分钟，单位：秒）
+
+// 订单详情弹窗相关
+const dialogVisible = ref(false)
+const loadingDetail = ref(false)
+const orderDetail = ref<Order | null>(null)
+const currentOrderId = ref<number>(0)
 
 // 从购物车创建新订单
 
@@ -805,8 +874,53 @@ const cancelOrder = (orderId: number) => {
 }
 
 // 查看订单详情
-const viewOrderDetail = (orderId: number) => {
-  router.push(`/order/${orderId}`)
+const viewOrderDetail = async (orderId: number) => {
+  currentOrderId.value = orderId
+  dialogVisible.value = true
+  loadingDetail.value = true
+  orderDetail.value = null
+
+  try {
+    // 从现有订单列表中查找订单
+    const existingOrder = [...pendingOrders.value, ...completedOrders.value].find(order => order.id === orderId)
+    if (existingOrder) {
+      orderDetail.value = existingOrder
+    } else {
+      // 如果找不到，从API获取
+      const response = await axios.get(`http://localhost:8080/api/orders/${orderId}`)
+      if (response.data) {
+        orderDetail.value = response.data as Order
+      }
+    }
+  } catch (error) {
+    console.error('获取订单详情失败:', error)
+    ElMessage.error('获取订单详情失败')
+  } finally {
+    loadingDetail.value = false
+  }
+}
+
+// 获取订单状态文本
+const getStatusText = (status: string | number): string => {
+  if (typeof status === 'number') {
+    switch (status) {
+      case 0:
+        return '待付款'
+      case 1:
+        return '已完成'
+      default:
+        return '未知状态'
+    }
+  }
+
+  switch (status.toLowerCase()) {
+    case 'pending':
+      return '待付款'
+    case 'completed':
+      return '已完成'
+    default:
+      return '未知状态'
+  }
 }
 
 // 切换单个订单的选择状态
@@ -1659,5 +1773,95 @@ h1 {
   display: flex;
   justify-content: center;
   padding: 10px 0;
+}
+
+/* 订单详情弹窗样式 */
+.order-detail-content {
+  padding: 10px 0;
+}
+
+.loading-detail {
+  text-align: center;
+  padding: 20px;
+}
+
+.detail-header {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+}
+
+.detail-row {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.detail-row:last-child {
+  margin-bottom: 0;
+}
+
+.detail-label {
+  width: 80px;
+  font-weight: bold;
+  color: #606266;
+}
+
+.detail-value {
+  color: #303133;
+}
+
+.status-0 {
+  color: #e6a23c;
+}
+
+.status-1 {
+  color: #67c23a;
+}
+
+.order-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+}
+
+.order-items-table th,
+.order-items-table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ebeef5;
+}
+
+.order-items-table th {
+  background-color: #f5f7fa;
+  font-weight: bold;
+  color: #303133;
+}
+
+.order-items-table td {
+  color: #606266;
+}
+
+.order-items-table tr:last-child td {
+  border-bottom: none;
+}
+
+.detail-footer {
+  margin-top: 20px;
+  padding: 15px;
+  text-align: right;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+}
+
+.total-amount {
+  font-weight: bold;
+  color: #303133;
+  font-size: 16px;
+}
+
+.amount-value {
+  color: #f56c6c;
+  font-size: 18px;
 }
 </style>
