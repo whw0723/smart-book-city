@@ -6,11 +6,13 @@ on:
   workflow_dispatch: # 允许手动触发
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -27,6 +29,10 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
+      - name: List build files
+        run: ls -la ./frontend/dist
+        shell: bash
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -35,3 +41,5 @@ jobs:
           publish_branch: gh-pages
           enable_jekyll: false
           allow_empty_commit: true
+          full_commit_message: ${{ github.event.head_commit.message }}
+          force_orphan: false
