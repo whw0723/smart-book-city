@@ -36,6 +36,7 @@
             show-password
             clearable
             style="width: 220px;"
+            ref="passwordInputRef"
           ></el-input>
         </el-form-item>
 
@@ -76,6 +77,7 @@ const loginContainerRef = ref<HTMLElement | null>(null)
 const loading = ref(false)
 const loginType = ref('user') // 默认用户登录
 const usernameInputRef = ref<HTMLElement | null>(null)
+const passwordInputRef = ref<HTMLElement | null>(null)
 
 const loginForm = reactive({
   username: '',
@@ -100,26 +102,45 @@ onMounted(async () => {
   // 确保DOM已渲染完成
   await nextTick()
   
-  // 将焦点设置到用户名输入框
-  if (usernameInputRef.value) {
-    // 使用Element Plus的focus方法
+  // 根据登录类型设置焦点
+  if (loginType.value === 'admin' && passwordInputRef.value) {
+    // 管理员登录时，焦点设置到密码输入框
+    (passwordInputRef.value as any).focus()
+  } else if (usernameInputRef.value) {
+    // 用户登录时，焦点设置到用户名输入框
     (usernameInputRef.value as any).focus()
   }
 })
 
 // 移除组件卸载时的粒子清理代码
 
-// 监听登录类型变化，切换时加载对应的用户名
-watch(loginType, (newType) => {
+// 监听登录类型变化，切换时加载对应的用户名并设置焦点
+watch(loginType, async (newType) => {
   // 切换登录类型时清空密码
   loginForm.password = ''
 
   if (newType === 'user') {
     const savedUsername = localStorage.getItem('lastUserUsername')
     loginForm.username = savedUsername || ''
+    
+    // 确保DOM已更新
+    await nextTick()
+    
+    // 用户登录时，焦点设置到用户名输入框
+    if (usernameInputRef.value) {
+      (usernameInputRef.value as any).focus()
+    }
   } else {
     const savedUsername = localStorage.getItem('lastAdminUsername')
     loginForm.username = savedUsername || ''
+    
+    // 确保DOM已更新
+    await nextTick()
+    
+    // 管理员登录时，焦点设置到密码输入框
+    if (passwordInputRef.value) {
+      (passwordInputRef.value as any).focus()
+    }
   }
 })
 
